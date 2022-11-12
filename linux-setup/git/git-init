@@ -1,0 +1,10 @@
+#!/bin/bash
+cp git/.gitconfig ~/
+
+ read -p "Generate a new ssh key?(y/n): " generateNewSSHKey
+
+ if [ "$generateNewSSHKey" == "y" ]; then
+     ssh-keygen -t ed25519 -C "eliasmflilico@gmail.com"
+     cat ~/.ssh/id_ed25519.pub | xclip -selection clipboard
+     echo "SSH key added to the clipboard"
+ fi

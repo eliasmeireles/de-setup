@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+mkdir ~/.config-temp
+
+echo "Downloading Google Chrome..."
+
+if wget -O ~/.config-temp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;then
+    sudo dpkg -i ~/.config-temp/chrome.deb
+    sudo cp "chrome/chrome" /usr/bin
+    echo "Download Google Chrome completed"
+fi
+

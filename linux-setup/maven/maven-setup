@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+MVN_VERSION=3.8.6
+MVN_DIR=apache-maven-"$MVN_VERSION"
+APACHE_MVN_DIR="$HOME/Development/Apache/$MVN_DIR"
+
+echo "Downloading Apache Maven..."
+
+mkdir -p "$APACHE_MVN_DIR"
+
+if wget -O ~/.config-temp/"$MVN_DIR"-bin.tar.gz https://dlcdn.apache.org/maven/maven-3/"$MVN_VERSION"/binaries/apache-maven-"$MVN_VERSION"-bin.tar.gz; then
+  if tar -xzf ~/.config-temp/"$MVN_DIR"-bin.tar.gz -C "$HOME/Development/Apache"; then
+    echo "Apache Maven installed successfully"
+    {
+      echo
+      echo "# Apache maven configuration"
+      echo "export M2_HOME=\"$APACHE_MVN_DIR\""
+      echo "export PATH=\"\$PATH:\$M2_HOME/bin\""
+    } >>~/.zshrc
+  fi
+fi

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+flutterVersion=3.3.8
+
+echo "Installing flutter"
+
+if wget -O ~/.config-temp/flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_$flutterVersion-stable.tar.xz"; then
+   tar -xf ~/.config-temp/flutter.tar.xz -C ~/Development/
+   echo "Flutter successful installed"
+fi

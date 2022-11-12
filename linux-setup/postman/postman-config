@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+echo "Downloading Postman..."
+
+sudo chown -R "$(whoami)" /usr/share
+
+if wget -O ~/.config-temp/postman.tar.gz https://dl.pstmn.io/download/latest/linux64; then
+    if tar -xzf ~/.config-temp/postman.tar.gz -C /usr/share/; then
+        cp "postman/postman.desktop" ~/.local/share/applications
+        sudo cp postman/postman /usr/bin
+        sudo chmod +x /usr/bin/postman
+
+        sudo chown -R "$(whoami)" /usr/share/Postman
+        echo "Postman installed successfully"
+    fi
+fi

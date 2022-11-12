@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+ideaVersion="2022.1.3"
+
+echo "Downloading IntelliJ IDEA version $ideaVersion..."
+
+sudo chown -R "$(whoami)" /usr/share
+
+if wget -O ~/.config-temp/idea.tar.gz "https://download-cdn.jetbrains.com/idea/ideaIU-$ideaVersion.tar.gz"; then
+    rm -rf /usr/share/idea/ 
+    mkdir /usr/share/idea/
+    if tar -xzf ~/.config-temp/idea.tar.gz -C /usr/share/idea/ --strip-components 1; then
+        sed -i 's/#\(\s\)*idea.plugins.path[^\n]*/idea.plugins.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/intellij-idea/g'  '/usr/share/idea/bin/idea.properties' 
+        sed -i 's/#\(\s\)*idea.config.path[^\n]*/idea.config.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/intellij-idea/g' '/usr/share/idea/bin/idea.properties'
+
+        cp "idea/IntelliJ IDEA.desktop" ~/.local/share/applications
+        sudo cp "idea/idea" /usr/local/bin/
+        sudo chmod +x /usr/local/bin/idea
+
+        sudo chown -R "$(whoami)" /usr/share/idea
+        echo "IntelliJ IDEA installed successfully"
+    fi
+fi

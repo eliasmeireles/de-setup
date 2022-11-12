@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+MVN_VERSION=3.8.6
+JAVA_VERSION=openjdk-11.0.2
+MVN_DIR=apache-maven-"$MVN_VERSION"
+APACHE_MVN_DIR="$HOME/Development/Apache/$MVN_DIR"
+
+
+cp .zshrc ~/
+
+chmod +x "idea/idea-config"
+chmod +x "studio/studio-config"
+chmod +x "docker/docker-config"
+chmod +x "postman/postman-config"
+chmod +x "visual-code/code-config"
+chmod +x "chrome/chrome-config"
+chmod +x "git/git-init"
+
+./git/git-init
+./idea/idea-config
+./studio/studio-config
+./docker/docker-config
+./postman/postman-config
+./visual-code/code-config
+./chrome/chrome-config
+
+JAVA_DIR="jdk-$JAVA_VERSION"
+sudo mkdir /usr/lib/jvm/$JAVA_DIR
+
+echo "Installing nvm"
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+nvm install --lts
+nvm install v10.24.1
+
+echo "Downloading $JAVA_VERSION..."
+
+if wget -O ~/.config-temp/"$JAVA_VERSION".tar.gz https://download.java.net/java/GA/jdk11/9/GPL/"$JAVA_VERSION"_linux-x64_bin.tar.gz; then
+  if sudo tar -xzf ~/.config-temp/"$JAVA_VERSION".tar.gz -C /usr/lib/jvm/$JAVA_DIR/ --strip-components 1; then
+
+    {
+      echo
+      echo "# Java configuration"
+      echo export JAVA_HOME=\"/usr/lib/jvm/$JAVA_DIR\"
+      echo export PATH="\"\$PATH:\$JAVA_HOME/bin\""
+    }  >> ~/.zshrc
+
+    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/"$JAVA_DIR"/bin/java 0
+    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/"$JAVA_DIR"/bin/javac 0
+    sudo update-alternatives --set java /usr/lib/jvm/"$JAVA_DIR"/bin/java
+    sudo update-alternatives --set javac /usr/lib/jvm/"$JAVA_DIR"/bin/javac
+    update-alternatives --list java
+    update-alternatives --list javac
+    echo "$JAVA_VERSION installed successfully"
+  fi
+fi
+
+echo "Downloading Apache Maven..."
+
+mkdir -p "$APACHE_MVN_DIR"
+
+if wget -O ~/.config-temp/"$MVN_DIR"-bin.tar.gz https://dlcdn.apache.org/maven/maven-3/"$MVN_VERSION"/binaries/apache-maven-"$MVN_VERSION"-bin.tar.gz; then
+  if tar -xzf ~/.config-temp/"$MVN_DIR"-bin.tar.gz -C "$HOME/Development/Apache"; then
+    echo "Apache Maven installed successfully"
+    {
+      echo
+      echo "# Apache maven configuration"
+      echo "export M2_HOME=\"$APACHE_MVN_DIR\""
+      echo "export PATH=\"\$PATH:\$M2_HOME/bin\""
+    } >> ~/.zshrc
+  fi
+fi
+
+
+sudo rm -rf ~/.oh-my-zsh/custom/themes/powerlevel10k
+sudo rm -rf ~/.oh-my-zsh/plugins/zsh-autosuggestions
+sudo rm -rf ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+
+
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ~/.oh-my-zsh/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+
+
+rm -Rf ~/.config-temp
+mkdir ~/.config/dconf
+cp user ~/.config/dconf
+cp .p10k.zsh ~/
+
+
+

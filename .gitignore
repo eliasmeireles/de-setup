@@ -1,0 +1,24 @@
+# Log Files
+consoles/
+event-log-metadata/
+workspace/
+projects/
+options/
+extensions/
+terminal/
+mdn/
+jdbc-drivers/
+ssl/
+datagrip.key
+port
+port.lock
+system/
+tasks/
+caches/
+plugins/
+event-log-metadata/
+workspace/
+idea.key
+disabled_plugins.txt
+disabled_update.txt
+.idea
