@@ -1,8 +1,5 @@
-install:
-	./installer
+setup-run:
+	sh ./installer
 
-install-ohmyzsh:
-	sh ./onmyzsh/install
-	
-setup-ohmyzsh:
-	sh ./onmyzsh/setup
+wm-ware-play-fix:
+	sh wm-ware-play-fix

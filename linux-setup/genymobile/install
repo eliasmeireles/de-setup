@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# https://github.com/Genymobile/scrcpy
+
+echo "Installing Genymobile..."
+
+sudo apt install scrcpy -y

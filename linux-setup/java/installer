@@ -2,6 +2,10 @@
 
 # https://jdk.java.net/archive/
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 sudo apt-get install visualvm -y
 
 JAVA_VERSION=openjdk-11.0.2

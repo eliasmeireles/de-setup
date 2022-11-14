@@ -1,53 +1,32 @@
 #!/usr/bin/env bash
 
-sudo apt update
-sudo apt-get install curl -y
-sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev -y
-sudo add-apt-repository ppa:git-core/ppa -y
-sudo apt update
-sudo apt install git -y
-sudo apt install xdg-desktop-portal-gnome -y
-
-# https://github.com/Genymobile/scrcpy
-sudo apt install scrcpy -y
-
-sudo apt-get install fuse libfuse2 -y
-sudo apt-get install build-essential file -y
-sudo apt-get install xclip -y
-sudo apt-get install zsh -y
-
 if [ ! -d "$HOME/Development/" ]; then
-    mkdir ~/Development/
+  mkdir ~/Development/
 fi
 
 if [ ! -d "$HOME/.config-temp" ]; then
-    mkdir ~/.config-temp
+  mkdir ~/.config-temp
 fi
 
-cp .zshrc ~/
-
 installerRun() {
-    chmod +x "$1"    
-    sh "$1"
+  chmod +x "$1"
+  sh "$1"
 }
 
-installerRun "./idea/idea-config"
-installerRun "./studio/studio-config"
-installerRun "./docker/docker-config"
-installerRun "./postman/postman-config"
-installerRun "./visual-code/code-config"
-installerRun "./chrome/chrome-config"
-installerRun "./java/installer"
-installerRun "./maven/installer"
+grep -v '^ *#' < runner.conf | while IFS= read -r line
+do
+  installerRun "$line"
+done
 
 rm -Rf ~/.config-temp
 
 if [ ! -d "$HOME/.config/dconf" ]; then
-    echo "Creating dconf"
-    mkdir ~/.config/dconf
+  echo "Creating dconf"
+  mkdir ~/.config/dconf
 fi
 
 cp user ~/.config/dconf
 
-
-
+sudo apt-get install zsh -y
+cp .zshrc ~/
+exec zsh -l

@@ -4,6 +4,10 @@ MVN_VERSION=3.8.6
 MVN_DIR=apache-maven-"$MVN_VERSION"
 APACHE_MVN_DIR="$HOME/Development/Apache/$MVN_DIR"
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 echo "Downloading Apache Maven..."
 
 mkdir -p "$APACHE_MVN_DIR"

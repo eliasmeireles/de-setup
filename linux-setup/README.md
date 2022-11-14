@@ -1,6 +1,14 @@
 ## Microsoft Teams share screen fix
 
 ```shell
+sudo apt install make
+```
+
+```shell
+make setup-run
+```
+
+```shell
 sudo vi /etc/gdm3/custom.conf
 ```
 
@@ -15,7 +23,8 @@ By running the command above, uncomment `WaylandEnable=false`. Save the changes 
 
 [DOWNLOAD](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
-- If you want to download to a remote server or if you simply prefer wget, use the command given in this StackOverflow answer: Downloading JDK
+- If you want to download to a remote server or if you simply prefer wget, use the command given in this StackOverflow
+  answer: Downloading JDK
 
 - Step 2:
 - Open the terminal (Ctrl + Alt + T) and enter the following command.
@@ -24,7 +33,8 @@ By running the command above, uncomment `WaylandEnable=false`. Save the changes 
 sudo mkdir /usr/lib/jvm
 ````
 
-- If the /usr/lib/jvm folder does not exist, this command will create the directory. If you already have this folder, you can ignore this - Step and move to the
+- If the /usr/lib/jvm folder does not exist, this command will create the directory. If you already have this folder,
+  you can ignore this - Step and move to the
   next - Step.
 
 - Step 3:
@@ -41,7 +51,8 @@ cd /usr/lib/jvm
 sudo tar -xvzf ~/Downloads/jdk-11.0.12_linux-x64_bin.tar.gz
 ````
 
-- According to this command, the JDK filename is jdk-11.0.12_linux-x64_bin.tar.gz and which is located in the ~/Downloads folder. If your downloaded file is in
+- According to this command, the JDK filename is jdk-11.0.12_linux-x64_bin.tar.gz and which is located in the ~
+  /Downloads folder. If your downloaded file is in
   any other location, change the command according to your path.
 
 - Enter the following command to open the environment variables file.
@@ -88,7 +99,8 @@ JAVA_HOME="/usr/lib/jvm/jdk-11.0.12"
 - Save the changes and close nano (Ctrl + O, Ctrl + X).
 
 - Step 7:
-- Enter the following commands to inform the system about the Java's location. Depending on your JDK version, the paths can be different.
+- Enter the following commands to inform the system about the Java's location. Depending on your JDK version, the paths
+  can be different.
 
 ````
 sudo update-alternatives --install /usr/bin/java  java /usr/lib/jvm/jdk-11.0.12/bin/java 0
@@ -107,7 +119,8 @@ sudo update-alternatives --set javac /usr/lib/jvm/jdk-11.0.12/bin/javac
 ````
 
 - Step 8:
-- To verify the setup enter the following commands and make sure that they print the location of java and javac as you have provided in the previous - Step.
+- To verify the setup enter the following commands and make sure that they print the location of java and javac as you
+  have provided in the previous - Step.
 
 ````
 update-alternatives --list java
