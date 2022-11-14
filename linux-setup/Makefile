@@ -1,12 +1,8 @@
-on-start:
-	mkdir ~/Development/
-	mkdir ~/.config-temp
-
-on-finish:
-	rm -Rf ~/.config-temp
-
-
-
-full-setup:
-	./init
+install:
 	./installer
+
+install-ohmyzsh:
+	sh ./onmyzsh/install
+	
+setup-ohmyzsh:
+	sh ./onmyzsh/setup

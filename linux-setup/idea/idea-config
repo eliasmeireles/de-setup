@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 ideaVersion="2022.1.3"
 
 echo "Downloading IntelliJ IDEA version $ideaVersion..."

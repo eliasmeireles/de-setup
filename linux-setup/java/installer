@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# https://jdk.java.net/archive/
+
+sudo apt-get install visualvm -y
+
+JAVA_VERSION=openjdk-11.0.2
+
+JAVA_DIR="jdk-$JAVA_VERSION"
+sudo mkdir /usr/lib/jvm/$JAVA_DIR
+
+echo "Installing $JAVA_VERSION..."
+
+if wget -O ~/.config-temp/"$JAVA_VERSION".tar.gz https://download.java.net/java/GA/jdk11/9/GPL/"$JAVA_VERSION"_linux-x64_bin.tar.gz; then
+  if sudo tar -xzf ~/.config-temp/"$JAVA_VERSION".tar.gz -C /usr/lib/jvm/$JAVA_DIR/ --strip-components 1; then
+
+    {
+      echo
+      echo "# Java configuration"
+      echo export JAVA_HOME=\"/usr/lib/jvm/$JAVA_DIR\"
+      echo export PATH="\"\$PATH:\$JAVA_HOME/bin\""
+    }  >> ~/.zshrc
+
+    sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/"$JAVA_DIR"/bin/java 0
+    sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/"$JAVA_DIR"/bin/javac 0
+    sudo update-alternatives --set java /usr/lib/jvm/"$JAVA_DIR"/bin/java
+    sudo update-alternatives --set javac /usr/lib/jvm/"$JAVA_DIR"/bin/javac
+    update-alternatives --list java
+    update-alternatives --list javac
+    echo "$JAVA_VERSION installed successfully"
+  fi
+fi

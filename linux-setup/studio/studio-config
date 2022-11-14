@@ -2,6 +2,10 @@
 
 studioVersion="2021.2.1.15"
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 echo "Downloading Android Studio version $studioVersion..."
 
 sudo chown -R "$(whoami)" /usr/share

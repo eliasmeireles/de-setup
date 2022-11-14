@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 echo "Downloading Visual code..."
-if wget -O ~/.config-temp/code.deb https://az764295.vo.msecnd.net/stable/dfd34e8260c270da74b5c2d86d61aee4b6d56977/code_1.66.2-1649664567_amd64.deb;then
+if wget -O ~/.config-temp/code.deb https://az764295.vo.msecnd.net/stable/dfd34e8260c270da74b5c2d86d61aee4b6d56977/code_1.66.2-1649664567_amd64.deb; then
   if sudo dpkg -i ~/.config-temp/code.deb;then
     echo "Visual code installed successfully"
   fi

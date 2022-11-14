@@ -2,6 +2,15 @@
 
 flutterVersion=3.3.8
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
+if [ ! -d "$HOME/Development" ]; then
+    mkdir ~/Development
+fi
+
+
 echo "Installing flutter"
 
 if wget -O ~/.config-temp/flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_$flutterVersion-stable.tar.xz"; then

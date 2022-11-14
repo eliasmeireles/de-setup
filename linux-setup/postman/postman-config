@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+fi
+
 echo "Downloading Postman..."
 
 sudo chown -R "$(whoami)" /usr/share
