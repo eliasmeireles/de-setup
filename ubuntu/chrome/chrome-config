@@ -9,6 +9,7 @@ echo "Downloading Google Chrome..."
 if wget -O ~/.config-temp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;then
     sudo dpkg -i ~/.config-temp/chrome.deb
     sudo cp "chrome/chrome" /usr/bin
-    echo "Chrome successful instaled"
+    echo "Chrome successful installed"
 fi
 
+sudo apt install -y xdg-desktop-portal-gnome
