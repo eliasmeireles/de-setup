@@ -26,7 +26,3 @@ if [ ! -d "$HOME/.config/dconf" ]; then
 fi
 
 cp user ~/.config/dconf
-
-cp .zshrc ~/
-sudo apt-get install -y zsh
-exec zsh -l
