@@ -17,7 +17,7 @@ if wget -O ~/.config-temp/idea.tar.gz "https://download-cdn.jetbrains.com/idea/i
         sed -i "s/#\(\s\)*idea.plugins.path[^\n]*/idea.plugins.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/intellij-idea/g"  '/usr/share/idea/bin/idea.properties'
         sed -i "s/#\(\s\)*idea.config.path[^\n]*/idea.config.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/intellij-idea/g" '/usr/share/idea/bin/idea.properties'
 
-        cp "idea/IntelliJ IDEA.desktop" ~/.local/share/applications
+        cp "intellij-idea/IntelliJ IDEA.desktop" ~/.local/share/applications
         sudo cp "intellij-idea/idea" /usr/local/bin/
         sudo chmod +x /usr/local/bin/idea
 
