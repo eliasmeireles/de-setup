@@ -4,7 +4,13 @@ echo "Installing Docker..."
 
 sudo apt-get remove docker docker-engine docker.io containerd runc
 
-sudo mkdir -p /etc/apt/keyrings
+if [[ ! -d /etc/apt/keyrings ]]; then
+    sudo mkdir -p /etc/apt/keyrings
+fi
+
+if [[ -f /etc/apt/keyrings/docker.gpg ]]; then
+  sudo rm /etc/apt/keyrings/docker.gpg
+fi
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
