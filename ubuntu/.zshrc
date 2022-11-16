@@ -20,7 +20,7 @@ alias chrome="setsid google-chrome &>/dev/null"
 alias localServer="ssh eliasferreira@developerserver.local"
 
 # Zip
-alias tar-unzip="tar -xzf"
+alias tar-unzip="tar -xvzf"
 alias tar-zip="tar cvfz"
 
 # Kubernetes
