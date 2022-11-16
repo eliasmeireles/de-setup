@@ -5,4 +5,4 @@ wm-ware-play-fix:
 	sh wm-ware-play-fix
 
 install-node:
-    nvm install --lts
+	nvm install --lts
