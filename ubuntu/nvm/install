@@ -18,7 +18,7 @@ echo "Node Version Manager successfully"
 {
   echo
   echo "# Node Version Manager configuration"
-  echo "export PATH=\"\$PATH:\$NVM_DIR/versions/node/$node_version/bin\""
+  echo "export PATH=\"\$PATH:$NVM_DIR/versions/node/$node_version/bin\""
 } >>~/.zshrc
 
 
