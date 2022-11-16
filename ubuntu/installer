@@ -1,37 +1,48 @@
 #!/usr/bin/env bash
 
-cp .zshrc ~/
-if [ ! -d "$HOME/.config/dconf" ]; then
-  echo "Creating dconf"
-  mkdir ~/.config/dconf
-fi
+main() {
+  mkdir "$HOME/.de-setup-log/"
+  current_log_file="$HOME/.de-setup-log/$(date +"%Y_%m_%d_%I_%M_%p").log"
+  cp .zshrc ~/
 
-cp user ~/.config/dconf
-
-if [ ! -d "$HOME/Development/" ]; then
-  mkdir ~/Development/
-fi
-
-if [ ! -d "$HOME/.config-temp" ]; then
-  mkdir ~/.config-temp
-fi
-
-installer_run() {
-  install_sh="./$1"
-  if chmod +x "$install_sh"; then
-    sh "$install_sh"
-    if [ $? -ne "0" ]; then
-        echo "Failed to run command $install_sh"
-      else
-        echo "$install_sh executed"
-    fi
+  if [ ! -d "$HOME/Development/" ]; then
+    mkdir ~/Development/
   fi
+
+  if [ ! -d "$HOME/.config-temp" ]; then
+    mkdir ~/.config-temp
+  fi
+
+  installer_run() {
+    install_sh="./$1"
+    if chmod +x "$install_sh"; then
+      sh "$install_sh" >> "$current_log_file"
+      if [ $? -ne "0" ]; then
+        echo "Failed to run command $install_sh" >> "$current_log_file"
+      else
+        echo "$install_sh executed" >> "$current_log_file"
+      fi
+    fi
+  }
+
+  grep -E '^[^\s#]' <runner.conf | while IFS= read -r line; do
+    installer_run "$line"
+  done
+
+  rm -Rf "$HOME"/.config-temp
+  if [ ! -d "$HOME/.config/dconf" ]; then
+    echo "Creating dconf"
+    mkdir "$HOME"/.config/dconf
+  fi
+
+  cp ./user ~/.config/dconf
+
+  echo
+  echo
+  echo "Setup completed, reboot system is required"
+  sudo chsh -s /bin/bash
+  exec zsh -l
 }
 
-grep -E '^[^\s#]' <runner.conf | while IFS= read -r line; do
-  installer_run "$line"
-done
+main
 
-rm -Rf ~/.config-temp
-
-exec zsh -l

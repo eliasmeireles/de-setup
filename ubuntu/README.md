@@ -7,7 +7,10 @@ sudo apt update && sudo apt install -y git make && git clone https://github.com/
 ```
 
 ## Run setup
- 
+
+- By running the command bellow, a full setup will be executed
+- If you want to disable an installation, just comment installer line on [runner.conf](runner.conf) 
+
 ```shell
 make setup-run
 ```
