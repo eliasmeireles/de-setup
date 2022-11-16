@@ -9,6 +9,6 @@ sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get install fuse libfuse2 -y
 sudo apt-get install build-essential file -y
 sudo apt-get install xclip -y
-
+sudo chsh -s /usr/bin/zsh "$USER"
 sudo apt-get update
 
