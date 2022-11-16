@@ -1,8 +1,6 @@
 #!/usr/bin/env zsh
 
 main() {
-  mkdir "$HOME/.de-setup-log/"
-  current_log_file="$HOME/.de-setup-log/$(date +"%Y_%m_%d_%I_%M_%p").log"
   cp .zshrc ~/
 
   if [ ! -d "$HOME/Development/" ]; then
@@ -16,11 +14,11 @@ main() {
   installer_run() {
     install_sh="$1"
     if chmod +x "./$install_sh"; then
-      ./"$install_sh" >> "$current_log_file"
+      ./"$install_sh"
       if [ $? -ne "0" ]; then
-        echo "Failed to run command $install_sh" >> "$current_log_file"
+        echo "Failed to run command $install_sh"
       else
-        echo "$install_sh executed" >> "$current_log_file"
+        echo "$install_sh successful executed"
       fi
     fi
   }
