@@ -497,8 +497,6 @@ EOF
   setup_shell
   plugin_setup
   print_success
-
-  exec zsh -l
 }
 
 main "$@"

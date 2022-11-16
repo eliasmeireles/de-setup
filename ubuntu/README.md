@@ -7,7 +7,13 @@ sudo apt update && sudo apt install -y git make && git clone https://github.com/
 ```
 
 ## Run setup
-- 
+ 
 ```shell
 make setup-run
 ```
+
+- Install node
+```shell
+make install-node
+```
+
