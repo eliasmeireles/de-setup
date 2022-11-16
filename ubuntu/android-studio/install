@@ -14,12 +14,13 @@ if wget -O ~/.config-temp/studio.tar.gz https://r1---sn-85axoxu-jo4e.gvt1.com/ed
     if tar -xzf ~/.config-temp/studio.tar.gz -C /usr/share/; then
         sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 -y
 
-        sed -i 's/#\(\s\)*idea.plugins.path[^\n]*/idea.plugins.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/android-studio/g'  '/usr/share/android-studio/bin/idea.properties'
-        sed -i 's/#\(\s\)*idea.config.path[^\n]*/idea.config.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/android-studio/g' '/usr/share/android-studio/bin/idea.properties'
+        sed -i "s/#\(\s\)*idea.plugins.path[^\n]*/idea.plugins.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/android-studio/g"  '/usr/share/android-studio/bin/idea.properties'
+        sed -i "s/#\(\s\)*idea.config.path[^\n]*/idea.config.path=\${user.home}\/Development\/developer-utilities\/ideas-config\/android-studio/g" '/usr/share/android-studio/bin/idea.properties'
 
         cp "studio/Android Studio.desktop" ~/.local/share/applications
         sudo cp "studio/studio" /usr/local/bin
         sudo chmod +x /usr/local/bin/studio
         echo "Android studio installed successfully"
     fi
+    rm ~/.config-temp/studio.tar.gz
 fi

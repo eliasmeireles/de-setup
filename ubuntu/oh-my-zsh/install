@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+sudo apt-get install -y zsh
+sudo apt-get update
+sudo chsh -s /usr/bin/zsh
+
+if [ ! -d "$HOME/.config-temp" ]; then
+  mkdir ~/.config-temp
+fi
+
+rm -rf "$HOME"/.oh-my-zsh
+
+sudo apt-get install fonts-powerline -y
+cp oh-my-zsh/p10k-setup "$HOME"/.config-temp/
+
+if wget -O ~/.config-temp/p10k.sh https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh; then
+  sed -i "s/[[:space:]]print_success/ print_success\n  sh \"\$HOME\"\/.config-temp\/p10k-setup/g" "$HOME/.config-temp/p10k.sh"
+  sh "$HOME"/.config-temp/p10k.sh --keep-zshrc
+fi

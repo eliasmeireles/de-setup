@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+cp .zshrc ~/
+
 if [ ! -d "$HOME/Development/" ]; then
   mkdir ~/Development/
 fi
@@ -8,14 +10,15 @@ if [ ! -d "$HOME/.config-temp" ]; then
   mkdir ~/.config-temp
 fi
 
-installerRun() {
-  chmod +x "$1"
-  sh "$1"
+installer_run() {
+  install_sh="./$1"
+  if chmod +x "$install_sh"; then
+    sh "$install_sh"
+  fi
 }
 
-grep -v '^ *#' < runner.conf | while IFS= read -r line
-do
-  installerRun "$line"
+grep -E '^[^\s#]' <runner.conf | while IFS= read -r line; do
+  installer_run "$line"
 done
 
 rm -Rf ~/.config-temp

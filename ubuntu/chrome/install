@@ -10,6 +10,7 @@ if wget -O ~/.config-temp/chrome.deb https://dl.google.com/linux/direct/google-c
     sudo dpkg -i ~/.config-temp/chrome.deb
     sudo cp "chrome/chrome" /usr/bin
     echo "Chrome successful installed"
+    rm ~/.config-temp/chrome.deb
 fi
 
 sudo apt install -y xdg-desktop-portal-gnome

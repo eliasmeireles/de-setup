@@ -10,5 +10,5 @@ if wget -O ~/.config-temp/code.deb https://az764295.vo.msecnd.net/stable/dfd34e8
   if sudo dpkg -i ~/.config-temp/code.deb;then
     echo "Visual code installed successfully"
   fi
+  rm ~/.config-temp/code.deb
 fi
- 

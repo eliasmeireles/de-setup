@@ -2,6 +2,6 @@
 
 # https://github.com/Genymobile/scrcpy
 
-echo "Installing Genymobile..."
+echo "Installing scrcpy..."
 
 sudo apt install scrcpy -y

@@ -22,4 +22,5 @@ if wget -O ~/.config-temp/"$MVN_DIR"-bin.tar.gz https://dlcdn.apache.org/maven/m
       echo "export PATH=\"\$PATH:\$M2_HOME/bin\""
     } >>~/.zshrc
   fi
+  rm ~/.config-temp/"$MVN_DIR"-bin.tar.gz
 fi

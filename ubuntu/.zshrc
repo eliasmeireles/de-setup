@@ -19,6 +19,10 @@ export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 alias chrome="setsid google-chrome &>/dev/null"
 alias localServer="ssh eliasferreira@developerserver.local"
 
+# Zip
+alias tar-unzip="tar -xzf"
+alias tar-zip="tar cvfz"
+
 # Kubernetes
 alias kgp="kubectl get pods"
 alias kgc="kubectl get configmap"

@@ -17,4 +17,5 @@ if wget -O ~/.config-temp/postman.tar.gz https://dl.pstmn.io/download/latest/lin
         sudo chown -R "$(whoami)" /usr/share/Postman
         echo "Postman installed successfully"
     fi
+    rm ~/.config-temp/postman.tar.gz
 fi

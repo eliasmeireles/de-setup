@@ -33,4 +33,5 @@ if wget -O ~/.config-temp/"$JAVA_VERSION".tar.gz https://download.java.net/java/
     update-alternatives --list javac
     echo "$JAVA_VERSION installed successfully"
   fi
+  rm ~/.config-temp/"$JAVA_VERSION".tar.gz
 fi
