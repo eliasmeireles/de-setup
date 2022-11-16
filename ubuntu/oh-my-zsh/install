@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-sudo apt-get install -y zsh
+#!/usr/bin/env zsh
 
 if [ ! -d "$HOME/.config-temp" ]; then
   mkdir ~/.config-temp

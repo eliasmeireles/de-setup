@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 main() {
   mkdir "$HOME/.de-setup-log/"
@@ -14,9 +14,9 @@ main() {
   fi
 
   installer_run() {
-    install_sh="./$1"
-    if chmod +x "$install_sh"; then
-      sh "$install_sh" >> "$current_log_file"
+    install_sh="$1"
+    if chmod +x "./$install_sh"; then
+      ./"$install_sh" >> "$current_log_file"
       if [ $? -ne "0" ]; then
         echo "Failed to run command $install_sh" >> "$current_log_file"
       else
@@ -29,20 +29,20 @@ main() {
     installer_run "$line"
   done
 
-  rm -Rf "$HOME"/.config-temp
-  if [ ! -d "$HOME/.config/dconf" ]; then
-    echo "Creating dconf"
-    mkdir "$HOME"/.config/dconf
-  fi
-
-  cp ./user ~/.config/dconf
-
   echo
   echo
   echo "Setup completed, reboot system is required"
   sudo chsh -s /bin/bash
   exec zsh -l
 }
+
+rm -Rf "$HOME"/.config-temp
+if [ ! -d "$HOME/.config/dconf" ]; then
+  echo "Creating dconf"
+  mkdir "$HOME"/.config/dconf
+fi
+
+cp ./user ~/.config/dconf
 
 main
 

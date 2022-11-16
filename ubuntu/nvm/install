@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 echo "Installing nvm"
 curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
@@ -7,4 +7,18 @@ NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 export NVM_DIR
+
+source "$HOME"/.zshrc
+
+node_version=v18.12.1
+
+nvm install --lts
+
+echo "Node Version Manager successfully"
+{
+  echo
+  echo "# Node Version Manager configuration"
+  echo "export PATH=\"\$PATH:\$NVM_DIR/versions/node/$node_version/bin\""
+} >>~/.zshrc
+
 
