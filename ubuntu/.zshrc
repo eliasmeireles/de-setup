@@ -51,3 +51,6 @@ export PATH=$PATH:$ANDROID_SDK/platform-tools:$ANDROID_SDK/tools
 alias emuList='emulator -avd -list-avds'
 alias emuStart='f() {setsid "$ANDROID_SDK/emulator/emulator" -avd $1 -netdelay none -netspeed full &> /dev/null &};f'
 
+# JetBrains ToolBox
+export JET_BRAINS_TOOL_BOX="/opt/jet-brains/"
+export PATH="$PATH:$JET_BRAINS_TOOL_BOX:$JET_BRAINS_TOOL_BOX/scripts"

@@ -432,6 +432,7 @@ print_success() {
   printf '%s\n' "• Join our Discord community: $(fmt_link "Discord server" https://discord.gg/ohmyzsh)"
   printf '%s\n' "• Get stickers, t-shirts, coffee mugs and more: $(fmt_link "Planet Argon Shop" https://shop.planetargon.com/collections/oh-my-zsh)"
   printf '%s\n' $FMT_RESET
+  printf '%sPlease reboot system by running (make setup-complete)%s' $FMT_RED $FMT_RESET
 }
 
 plugin_setup() {
@@ -446,21 +447,21 @@ plugin_setup() {
 
 main() {
   # Run as unattended if stdin is not a tty
-  if [ ! -t 0 ]; then
-    RUNZSH=no
-    CHSH=no
-  fi
-
-  # Parse arguments
-  while [ $# -gt 0 ]; do
-    case $1 in
-      --unattended) RUNZSH=no; CHSH=no ;;
-      --skip-chsh) CHSH=no ;;
-      --keep-zshrc) KEEP_ZSHRC=yes ;;
-    esac
-    shift
-  done
-
+#  if [ ! -t 0 ]; then
+#    RUNZSH=no
+#    CHSH=no
+#  fi
+#
+#  # Parse arguments
+#  while [ $# -gt 0 ]; do
+#    case $1 in
+#      --unattended) RUNZSH=no; CHSH=no ;;
+#      --skip-chsh) CHSH=no ;;
+#      --keep-zshrc) KEEP_ZSHRC=yes ;;
+#    esac
+#    shift
+#  done
+#
   setup_color
   setup_ohmyzsh
   setup_shell

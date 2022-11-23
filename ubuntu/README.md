@@ -1,5 +1,7 @@
 ## Developer environment setup
 
+> Last checked `Ubuntu 22.04.1`
+
 - Before start, run the commands bellow
 
 ```shell
@@ -18,5 +20,10 @@ make setup-run
 - Install node
 ```shell
 make install-node
+```
+
+- By running this command, user config will be updated and reboot system
+```shell
+make setup-complete
 ```
 
