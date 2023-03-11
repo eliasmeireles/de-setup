@@ -10,6 +10,15 @@ sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get install fuse libfuse2 -y
 sudo apt-get install build-essential file -y
 sudo apt-get install xclip -y
+
+# Set zsh as default
 sudo chsh -s /usr/bin/zsh "$USER"
+
+# Screen shot
+sudo apt-get install flameshot -y
+
+# Webcam view
+sudo apt-get install guvcview -y
+
 sudo apt-get update
 
