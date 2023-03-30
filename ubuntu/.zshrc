@@ -19,6 +19,28 @@ export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 alias chrome="setsid google-chrome &>/dev/null"
 alias localServer="ssh eliasferreira@developerserver.local"
 
+# Docker
+alias dlist="docker image ls"
+alias dp="docker ps"
+alias dpa="docker ps -a"
+alias dcrm="docker container rm"
+alias dcrmf="docker container rm -f"
+alias dexec="docker exec -it"
+# Copy from docker container example: dcopy my-container:/app/app.yaml
+alias dcopy="docker cp"
+alias dlf="docker logs -f"
+alias dl="docker logs"
+alias dirm="docker image rm"
+alias dirmf="docker image rm -f"
+alias ds="docker save -o"
+
+# Docker compose
+alias dcb="docker-compose up --build -d"
+alias dcbf="docker-compose up --build -d --force-recreate"
+alias dclf="docker-compose logs -f"
+alias dcl="docker-compose logs"
+alias dck="docker-compose kill"
+
 # Zip
 alias tar-unzip="tar -xvzf"
 alias tar-zip="tar cvfz"
