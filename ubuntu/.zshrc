@@ -17,7 +17,6 @@ export PATH="$PATH:$FLUTTER_PATH/bin"
 export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 
 alias chrome="setsid google-chrome &>/dev/null"
-alias localServer="ssh eliasferreira@developerserver.local"
 
 # Docker
 alias dlist="docker image ls"
