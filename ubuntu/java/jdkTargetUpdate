@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+sudo update-alternatives --install /usr/bin/java java "$JAVA_HOME"/bin/java 0
+sudo update-alternatives --install /usr/bin/javac javac "$JAVA_HOME"/bin/javac 0
+sudo update-alternatives --set java "$JAVA_HOME"/bin/java
+sudo update-alternatives --set javac "$JAVA_HOME"/bin/javac
+
+update-alternatives --list java
+update-alternatives --list javac
