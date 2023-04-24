@@ -18,15 +18,18 @@ sudo mkdir /usr/lib/jvm/"$JAVA_DIR"
 
 echo "Installing $JAVA_VERSION..."
 
+function setJdkAlternatives() {
+        sudo update-alternatives --install /usr/bin/java java "/usr/lib/jvm/$1"/bin/java 0
+        sudo update-alternatives --install /usr/bin/javac javac "/usr/lib/jvm/$1"/bin/javac 0
+        sudo update-alternatives --set java "/usr/lib/jvm/$1"/bin/java
+        sudo update-alternatives --set javac "/usr/lib/jvm/$1"/bin/javac
+        update-alternatives --list java
+        update-alternatives --list javac
+}
+
 if wget -O ~/.config-temp/"$JAVA_VERSION".tar.gz "$2"; then
   if sudo tar -xzf ~/.config-temp/"$JAVA_VERSION".tar.gz -C /usr/lib/jvm/"$JAVA_DIR"/ --strip-components 1; then
-
-    {
-      echo
-      echo "# Java configuration"
-      echo "export JAVA_HOME=\"/usr/lib/jvm/$JAVA_DIR\""
-      echo "export PATH=\"\$PATH:\$JAVA_HOME/bin\""
-    } >> "$HOME"/.zshrc
+    setJdkAlternatives "$JAVA_DIR"
 
     echo "$JAVA_VERSION installed successfully"
   fi
