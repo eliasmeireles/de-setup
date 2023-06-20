@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+mkdir -p /usr/lib/jvm/
+
 # https://jdk.java.net/archive/
 
 if [ ! -d "$HOME/.config-temp" ]; then
