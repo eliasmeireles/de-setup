@@ -4,17 +4,18 @@ rm -rf ~/download_temp/
 mkdir ~/download_temp/
 
 unzipJdk() {
-  mkdir ~/download_temp/zulu-jdk-"$1"
-  if tar -zxf ~/download_temp/zulu-jdk-"$1".tar.gz -C ~/download_temp/zulu-jdk-"$1" --strip-components 1; then
-    sudo mv ~/download_temp/zulu-jdk-"$1"/zulu-"$1".jdk /Library/Java/JavaVirtualMachines/
-    echo "JDK zulu-jdk-$1 installed"
+  echo "Installing zulu-$1.jdk"
+  mkdir ~/download_temp/zulu-"$1"
+  if tar -zxf ~/download_temp/zulu-"$1".tar.gz -C ~/download_temp/zulu-"$1" --strip-components 1; then
+    sudo mv ~/download_temp/zulu-"$1"/zulu-"$1".jdk /Library/Java/JavaVirtualMachines/
+    echo "JDK zulu-$1.jdk installed"
   else
-    echo "Failed to install JDK $1"
+    echo "Failed to install zulu-$1.jdk"
   fi
 }
 
 installJdk() {
-  if curl -fsSL "$1" -o ~/download_temp/zulu-jdk-"$2".tar.gz; then
+  if curl -fsSL "$1" -o ~/download_temp/zulu-"$2".tar.gz; then
     unzipJdk "$2"
   fi
 }

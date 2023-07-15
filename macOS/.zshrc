@@ -26,7 +26,7 @@ export TERM=xterm-256color
 export FLUTTER_PATH=":$HOME/Development/flutter"
 export PATH="$PATH:$FLUTTER_PATH/bin"
 export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-jdk-19/Contents/Home"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-19.jdk/Contents/Home"
 export PATH="$PATH:$JAVA_HOME"
 
 export KAFKA_PATH="$HOME/Development/Kafka/kafka_2.13-2.8.0"
