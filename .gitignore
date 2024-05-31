@@ -22,3 +22,6 @@ idea.key
 disabled_plugins.txt
 disabled_update.txt
 .idea
+
+**/**/.generated
+

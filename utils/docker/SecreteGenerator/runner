@@ -1,0 +1,43 @@
+#!/bin/bash
+
+CONTAINER_NAME="secrete-generator"
+
+# Check if the container exists
+if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
+    docker rm $CONTAINER_NAME
+fi
+
+docker build -t $CONTAINER_NAME .
+docker run -d --name $CONTAINER_NAME -e USER_EMAIL="$1" $CONTAINER_NAME  > /dev/null
+
+# Initialize start time
+start_time=$(date +%s)
+
+# Wait for the container to start
+while [ "$(docker inspect -f {{.State.Running}} $CONTAINER_NAME)" != "true" ]; do
+    # Get current time
+    current_time=$(date +%s)
+
+    # Calculate elapsed time
+    elapsed_time=$(($current_time - $start_time))
+
+    # If elapsed time is greater than 120 seconds (2 minutes), exit with error
+    if [ $elapsed_time -gt 120 ]; then
+        echo "Error: Container did not start within 2 minutes"
+        exit 1
+    fi
+
+    sleep 1
+done
+
+# Create the ./.generated directory if it doesn't exist
+mkdir -p ./.generated
+sleep 2
+docker cp $CONTAINER_NAME:/root/.ssh/ ./.generated/ > /dev/null
+mv ./.generated/.ssh/** ./.generated/
+rm -rf ./.generated/.ssh
+
+ls -lh ./.generated
+
+echo "Generated files are in the ./.generated directory"
+docker rm -f $CONTAINER_NAME > /dev/null
