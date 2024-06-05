@@ -25,6 +25,7 @@ alias dpa="docker ps -a"
 alias dcrm="docker container rm"
 alias dcrmf="docker container rm -f"
 alias dexec="docker exec -it"
+
 # Copy from docker container example: dcopy my-container:/app/app.yaml
 alias dcopy="docker cp"
 alias dlf="docker logs -f"
@@ -67,11 +68,16 @@ alias pbcopy="xclip -selection clipboard"
 alias pbpaste="xclip -selection clipboard -o"
 
 export ANDROID_SDK=~/Android/Sdk
-export PATH=$PATH:$ANDROID_SDK/platform-tools:$ANDROID_SDK/tools
+export PATH="$PATH:$ANDROID_SDK/platform-tools:$ANDROID_SDK/tools:$ANDROID_SDK/emulator/"
 
-alias emuList='emulator -avd -list-avds'
+alias emuList='$ANDROID_SDK/emulator/emulator -avd -list-avds'
 alias emuStart='f() {setsid "$ANDROID_SDK/emulator/emulator" -avd $1 -netdelay none -netspeed full &> /dev/null &};f'
 
 # JetBrains ToolBox
 export JET_BRAINS_TOOL_BOX="/opt/jet-brains/"
 export PATH="$PATH:$JET_BRAINS_TOOL_BOX:$JET_BRAINS_TOOL_BOX/scripts"
+
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
