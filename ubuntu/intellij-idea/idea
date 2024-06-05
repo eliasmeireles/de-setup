@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-setsid /usr/share/idea/bin/idea.sh "$@" &> /dev/null &

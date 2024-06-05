@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# https://github.com/Genymobile/scrcpy
-
-echo "Installing scrcpy..."
-
-sudo apt install scrcpy -y

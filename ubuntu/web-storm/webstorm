@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-setsid /usr/share/webstorm/bin/webstorm.sh "$@" &> /dev/null &
