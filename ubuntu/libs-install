@@ -11,6 +11,8 @@ sudo apt-get install fuse libfuse2 -y
 sudo apt-get install build-essential file -y
 sudo apt-get install xclip -y
 
+export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io" | bash
+
 # Set zsh as default
 sudo chsh -s /usr/bin/zsh "$USER"
 
