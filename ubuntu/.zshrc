@@ -19,6 +19,9 @@ export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 alias chrome="setsid google-chrome &>/dev/null"
 
 
+# Ip check
+alias ipCheck="ip a | grep -oP 'inet\s+\K(?!127\.0\.0\.1)[\d.]+'"
+
 # Docker
 alias dlist="docker image ls"
 alias dp="docker ps"
