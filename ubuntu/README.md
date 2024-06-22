@@ -38,3 +38,11 @@ make setup-complete
  env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/ubuntu-desktop-bootstrap_ubuntu-desktop-bootstrap.desktop LIBGL_ALWAYS_SOFTWARE=1 /snap/bin/ubuntu-desktop-bootstrap
 ````
 
+## US keyboard for typing `ç` error.
+
+- [As the reference in](https://www.danielkossmann.com/pt/ajeitando-cedilha-errado-ubuntu-linux/) try to run this following command e reboot the system.
+
+````shell
+sudo grep -qxF 'GTK_IM_MODULE=cedilla' /etc/environment || echo 'GTK_IM_MODULE=cedilla' | sudo tee -a /etc/environment
+sudo grep -qxF 'QT_IM_MODULE=cedilla' /etc/environment || echo 'QT_IM_MODULE=cedilla' | sudo tee -a /etc/environment
+````
