@@ -18,7 +18,6 @@ export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 
 alias chrome="setsid google-chrome &>/dev/null"
 
-
 # Ip check
 alias ipCheck="ip a | grep -oP 'inet\s+\K(?!127\.0\.0\.1)[\d.]+'"
 
@@ -51,7 +50,7 @@ alias diskUsage="df -h --total"
 alias tar-unzip="tar -xvzf"
 alias tar-zip="tar cvfz"
 
-alias clearPort='f(){sudo kill -9 $(sudo lsof -t -i:"$1")};f'
+alias clearPort='f(){ kill -9 $(lsof -t -i:$1) 2>/dev/null || true};f'
 
 # Zip
 alias tar-unzip="tar -xvzf"
@@ -91,6 +90,13 @@ alias getJobLogs='kubectl logs  -n jobs'
 
 alias kub13="/usr/local/bin/kubectl.1.21.13"
 alias kd="kubectl describe"
+alias kgp="kubectl get pods"
+alias kgh="kubectl get hpa"
+alias kgi="kubectl get ingress"
+alias kgs="kubectl get svc"
+alias kdp="kubectl describe pod"
+alias kds="kubectl describe service"
+alias kdh="kubectl describe hpa"
 # example -> kdj cronjob/job-name
 alias kdj="kubectl describe -n jobs"
 
@@ -101,6 +107,7 @@ alias gsp="git pull && git submodule foreach --recursive 'git pull ; sleep 1'"
 alias gsf="git fetch && git submodule foreach --recursive 'git fetch ; sleep 1'"
 alias gss="git status && git submodule foreach --recursive 'git status ; sleep 1'"
 alias gsclean="git remote prune origin && git submodule foreach --recursive 'git remote prune origin ; sleep 1'"
+alias gtagsync="git tag | grep -vxFf <(git ls-remote --tags origin | awk -F/ '{print $3}') | xargs -n 1 git tag -d && git fetch --all"
 
 # Maven
 alias mmrun='r(){values cluster=$1 --inline | echo "Values ok..." && mvnArgs=$(pbpaste) && mvn mn:run $mvnArgs};r'
@@ -124,8 +131,19 @@ alias emuStart='f() {setsid "$ANDROID_SDK/emulator/emulator" -avd $1 -netdelay n
 # JetBrains ToolBox
 export JET_BRAINS_TOOL_BOX="/opt/jet-brains/"
 export PATH="$PATH:$JET_BRAINS_TOOL_BOX:$JET_BRAINS_TOOL_BOX/scripts"
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:$HOME/go/bin"
 
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# Node Version Manager configuration
+export PATH="$PATH:$HOME/.nvm/versions/node/v18.12.1/bin"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PATH="$HOME/local-stack/awscli-env/bin:$PATH"
