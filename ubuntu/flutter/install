@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-flutterVersion=3.3.8
+flutterVersion=3.29.2
 
 if [ ! -d "$HOME/.config-temp" ]; then
     mkdir ~/.config-temp
