@@ -129,8 +129,10 @@ alias emuList='$ANDROID_SDK/emulator/emulator -avd -list-avds'
 alias emuStart='f() {setsid "$ANDROID_SDK/emulator/emulator" -avd $1 -netdelay none -netspeed full &> /dev/null &};f'
 
 # JetBrains ToolBox
-export JET_BRAINS_TOOL_BOX="/opt/jet-brains/"
+export JET_BRAINS_TOOL_BOX="$HOME/.local/share/JetBrains/Toolbox"
 export PATH="$PATH:$JET_BRAINS_TOOL_BOX:$JET_BRAINS_TOOL_BOX/scripts"
+
+# Go lang
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$PATH:$HOME/go/bin"
 
