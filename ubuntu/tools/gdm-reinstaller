@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+
+sudo apt update
+sudo apt install --reinstall gdm3
+sudo apt install --reinstall ubuntu-desktop
+sudo apt install --reinstall gnome-shell
+
+sudo dpkg-reconfigure gdm3
+
+sudo systemctl restart gdm

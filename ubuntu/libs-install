@@ -4,27 +4,27 @@ sudo apt update
 
 sudo apt-get install -y zsh
 sudo apt-get install -y ccrypt
-sudo apt-get install -y curl ca-certificates gnupg lsb-release
-sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev -y
+sudo apt-get install -y curl ca-certificates
 sudo add-apt-repository ppa:git-core/ppa -y
-sudo apt-get install fuse libfuse2 -y
-sudo apt-get install build-essential file -y
 sudo apt-get install xclip -y
 
-export SDKMAN_DIR="/usr/local/sdkman" && curl -s "https://get.sdkman.io" | bash
+# Install SDKMAN (without modifying shell config)
+export SDKMAN_DIR="$HOME/.sdkman"
+curl -s "https://get.sdkman.io" | bash
 
-# Set zsh as default
-sudo chsh -s /usr/bin/zsh "$USER"
+# Set zsh as default (only if Zsh is properly configured)
+if command -v zsh &> /dev/null; then
+  sudo chsh -s /usr/bin/zsh "$USER"
+fi
 
 # Screen shot
-sudo apt-get install flameshot -y
+#sudo apt-get install flameshot -y
 
 # Webcam view
-sudo apt-get install guvcview -y
+#sudo apt-get install guvcview -y
 
-sudo update-locale LANG="en_US.UTF-8"
-sudo update-locale LANGUAGE="en_US.UTF-8"
-sudo update-locale LC_ALL="en_US.UTF-8"
+# Update locale settings
+sudo update-locale LANG="en_US.UTF-8" LANGUAGE="en_US.UTF-8" LC_ALL="en_US.UTF-8"
 
 sudo apt-get update
 
