@@ -31,6 +31,17 @@ make setup-complete
 
 # Throwable shot
 
+### Keyboard type fix
+
+> In that trying type ç with `' and c` and it wants to work, run the command bellow
+
+```shell
+grep -qF "GTK_IM_MODULE=cedilla" /etc/environment || echo "GTK_IM_MODULE=cedilla" | sudo tee -a /etc/environment > /dev/null
+grep -qF "QT_IM_MODULE=cedilla" /etc/environment || echo "QT_IM_MODULE=cedilla" | sudo tee -a /etc/environment > /dev/null
+```
+
+### Ubuntu installation
+
 > Ubuntu 24.04 installer was crashing. Try to launch the installer by using, reference
 > from [24.04 installer keeps crashing](https://www.reddit.com/r/Ubuntu/comments/1cd6tkg/2404_installer_keeps_crashing/)
 
