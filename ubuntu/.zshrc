@@ -102,6 +102,7 @@ alias kdj="kubectl describe -n jobs"
 
 # Git
 alias gs="git status"
+alias gitloggraph="git log --oneline --graph --decorate --all"
 alias gsi="git submodule update --init"
 alias gsp="git pull && git submodule foreach --recursive 'git pull ; sleep 1'"
 alias gsf="git fetch && git submodule foreach --recursive 'git fetch ; sleep 1'"
