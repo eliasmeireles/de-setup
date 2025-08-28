@@ -12,6 +12,13 @@ source $ZSH/oh-my-zsh.sh
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# Autojump https://github.com/wting/autojump
+[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && source $HOME/.autojump/etc/profile.d/autojump.sh
+autoload -U compinit && compinit -u
+export PROMPT_COMMAND="history -a"
+alias jaddall='for d in */; do autojump --add "$(pwd)/$d"; done'
+
+
 export FLUTTER_PATH=":$HOME/Development/flutter"
 export PATH="$PATH:$FLUTTER_PATH/bin"
 export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
@@ -99,16 +106,6 @@ alias kds="kubectl describe service"
 alias kdh="kubectl describe hpa"
 # example -> kdj cronjob/job-name
 alias kdj="kubectl describe -n jobs"
-
-# Git
-alias gs="git status"
-alias gitloggraph="git log --oneline --graph --decorate --all"
-alias gsi="git submodule update --init"
-alias gsp="git pull && git submodule foreach --recursive 'git pull ; sleep 1'"
-alias gsf="git fetch && git submodule foreach --recursive 'git fetch ; sleep 1'"
-alias gss="git status && git submodule foreach --recursive 'git status ; sleep 1'"
-alias gsclean="git remote prune origin && git submodule foreach --recursive 'git remote prune origin ; sleep 1'"
-alias gtagsync="git tag | grep -vxFf <(git ls-remote --tags origin | awk -F/ '{print $3}') | xargs -n 1 git tag -d && git fetch --all"
 
 # Maven
 alias mmrun='r(){values cluster=$1 --inline | echo "Values ok..." && mvnArgs=$(pbpaste) && mvn mn:run $mvnArgs};r'
