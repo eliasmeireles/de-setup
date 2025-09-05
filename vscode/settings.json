@@ -1,0 +1,190 @@
+{
+    // Editor settings
+    "files.autoSave": "afterDelay",
+    "window.commandCenter": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "go.useLanguageServer": true,
+    "terminal.integrated.fontFamily": "MesloLGS NF",
+    "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-light",
+    "workbench.colorTheme": "IntelliJ IDEA New UI Light with Light Header",
+    "vim.overrideCopy": false,
+    "go.buildTags": "integration",
+    "editor.lineNumbers": "relative",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
+    },
+    "editor.rulers": [
+        120
+    ],
+    "editor.wordWrap": "off",
+    "editor.wordWrapColumn": 120,
+    // Go specific settings
+    "go.formatTool": "goimports",
+    "go.lintTool": "golint",
+    "go.vetOnSave": "package",
+    "go.toolsManagement.autoUpdate": true,
+    // SonarLint settings
+    "sonarlint.rules": {
+        // Line length rules
+        "go:S103": {
+            "level": "on",
+            "parameters": {
+                "maximumLineLength": "120"
+            }
+        },
+        "java:S103": {
+            "level": "on",
+            "parameters": {
+                "maximumLineLength": "120"
+            }
+        },
+        "javascript:S103": {
+            "level": "on",
+            "parameters": {
+                "maximumLineLength": "120"
+            }
+        },
+        "python:S103": {
+            "level": "on",
+            "parameters": {
+                "maximumLineLength": "120"
+            }
+        },
+        "typescript:S103": {
+            "level": "on",
+            "parameters": {
+                "maximumLineLength": "120"
+            }
+        },
+        // Maximum function parameters rules
+        "go:S107": {
+            "level": "on",
+            "parameters": {
+                "maximumFunctionParameters": "5"
+            }
+        },
+        "java:S107": {
+            "level": "on",
+            "parameters": {
+                "maximumFunctionParameters": "5"
+            }
+        },
+        "javascript:S107": {
+            "level": "on",
+            "parameters": {
+                "maximumFunctionParameters": "5"
+            }
+        },
+        "python:S107": {
+            "level": "on",
+            "parameters": {
+                "maximumFunctionParameters": "5"
+            }
+        },
+        "typescript:S107": {
+            "level": "on",
+            "parameters": {
+                "maximumFunctionParameters": "5"
+            }
+        }
+    },
+    "sonarlint.connectedMode.project": {
+        "connectionId": "",
+        "projectKey": ""
+    },
+    // File associations and formatting
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    // Language specific settings
+    "[go]": {
+        "editor.defaultFormatter": "golang.go",
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false,
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "off",
+        "editor.rulers": [
+            120
+        ],
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java",
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.rulers": [
+            120
+        ],
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "off"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.rulers": [
+            120
+        ],
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "off"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.rulers": [
+            120
+        ],
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "off"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "editor.rulers": [
+            120
+        ],
+        "editor.wordWrapColumn": 120,
+        "editor.wordWrap": "off"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.wordWrap": "on"
+    },
+    "jake.autoDetect": "on",
+    "launch": {
+        "configurations": [
+            {
+                "name": "GO RUN",
+                "type": "go",
+                "request": "launch",
+                "mode": "debug",
+                "program": "${workspaceFolder}/cmd/api/main.go",
+                "env": {
+                    "MY_ENV": "my_value"
+                }
+            }
+        ],
+        "compounds": []
+    }
+}
