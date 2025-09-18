@@ -155,7 +155,7 @@ let g:fzf_action = {
   \ }
 
 " Enhanced fzf configuration with preview (similar to your shell aliases)
-let g:fzf_preview_script = expand('~/workspace/personal/utils/de-setup/scripts/fzf-preview.sh')
+let g:fzf_preview_script = expand('~/.fzf/bin/fzf-preview.sh')
 
 " Configure preview options with file info display
 if filereadable(g:fzf_preview_script)

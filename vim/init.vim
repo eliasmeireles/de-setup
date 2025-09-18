@@ -81,21 +81,24 @@ Plug 'honza/vim-snippets'
 "" Go Lang Bundle
 Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 
-" LSP configuration (for Neovim)
-Plug 'neovim/nvim-lspconfig'
+" LSP configuration (force compatible version)
+" Use a stable, older version that works with Neovim 0.10
+Plug 'neovim/nvim-lspconfig', { 'tag': 'v0.1.6' }
 
-" Autocompletion
-Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
-Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
-Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
-Plug 'hrsh7th/cmp-path'          " Path completion source
-Plug 'hrsh7th/cmp-cmdline'       " Command line completion
-Plug 'L3MON4D3/LuaSnip'          " Snippet engine
-Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+" Autocompletion (only for Neovim 0.8+)
+if has('nvim-0.8')
+  Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
+  Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
+  Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
+  Plug 'hrsh7th/cmp-path'          " Path completion source
+  Plug 'hrsh7th/cmp-cmdline'       " Command line completion
+  Plug 'L3MON4D3/LuaSnip'          " Snippet engine
+  Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+endif
 
-" Linting and diagnostics (none-ls for Neovim)
-Plug 'nvim-lua/plenary.nvim'      " Required for none-ls (Neovim)
-Plug 'nvimtools/none-ls.nvim'     " LSP diagnostics, formatting, and code actions (maintained fork)
+" Linting and diagnostics (use stable null-ls)
+Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
+Plug 'jose-elias-alvarez/null-ls.nvim'  " Original null-ls (more stable)
 
 " Icons (if you have nerd-fonts installed)
 Plug 'ryanoasis/vim-devicons'
@@ -146,7 +149,7 @@ let g:fzf_action = {
   \ }
 
 " Enhanced fzf configuration with preview (similar to your shell aliases)
-let g:fzf_preview_script = expand('~/workspace/personal/utils/de-setup/scripts/fzf-preview.sh')
+let g:fzf_preview_script = expand('~/.fzf/bin/fzf-preview.sh')
 
 " Configure preview options with file info display
 if filereadable(g:fzf_preview_script)
@@ -164,6 +167,7 @@ endif
 
 " Set global fzf options for fzf.vim commands
 let $FZF_DEFAULT_OPTS = g:fzf_files_options
+
 
 
 " vim-easymotion - Vim motions on speed!
@@ -695,11 +699,17 @@ let g:ale_lint_delay = 750
 let g:ale_sign_error = '❌'
 let g:ale_sign_warning = '⚠️'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+" Disable ALE LSP integration to avoid conflicts
+let g:ale_disable_lsp = 1
 
 " --- LSP and Completion Configuration for Neovim ---
+if has('nvim')
 lua << EOLUA
--- LSP configuration (updated for Neovim 0.11+)
-local lspconfig = require('lspconfig')
+-- LSP configuration (simplified and stable)
+local ok, lspconfig = pcall(require, 'lspconfig')
+if not ok then
+  return
+end
 lspconfig.gopls.setup{
     cmd = {"gopls"},
     filetypes = {"go", "gomod"},
@@ -776,8 +786,11 @@ cmp.setup.cmdline(':', {
     })
 })
 
--- none-ls for additional linting and formatting
-local null_ls = require("null-ls")
+-- null-ls for additional linting and formatting
+local ok_null, null_ls = pcall(require, "null-ls")
+if not ok_null then
+  return
+end
 null_ls.setup({
     sources = {
         -- Go linters and formatters
@@ -790,6 +803,7 @@ null_ls.setup({
     },
 })
 EOLUA
+endif
 
 
 " html

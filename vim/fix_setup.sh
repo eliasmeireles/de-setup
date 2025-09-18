@@ -48,6 +48,10 @@ main() {
     echo "  • Plugin installation issues"
     echo ""
 
+    echo "Installing fzf"
+
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+
     # Create backups
     log_info "Creating configuration backups..."
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -77,6 +81,11 @@ main() {
     rm -rf ~/.vim/plugged/null-ls.nvim
     rm -rf ~/.config/nvim/plugged/null-ls.nvim
     rm -rf ~/.config/nvim/plugged/jose-elias-alvarez
+
+    # Remove problematic LSP plugins to force reinstall with correct versions
+    rm -rf ~/.config/nvim/plugged/nvim-lspconfig
+    rm -rf ~/.config/nvim/plugged/none-ls.nvim
+    rm -rf ~/.config/nvim/plugged/nvimtools
 
     log_success "Problematic plugins removed"
 
@@ -182,9 +191,10 @@ main() {
     echo ""
     log_info "Changes made:"
     echo "  ✅ Fixed Tab mapping conflicts in vim-mucomplete"
-    echo "  ✅ Replaced deprecated null-ls.nvim with none-ls.nvim"
-    echo "  ✅ Updated LSP configuration for Neovim 0.11+ compatibility"
-    echo "  ✅ Cleaned and reinstalled all plugins"
+    echo "  ✅ Fixed nvim-lspconfig compatibility issues"
+    echo "  ✅ Used stable LSP plugin versions (nvim-lspconfig v0.1.6)"
+    echo "  ✅ Disabled ALE LSP integration to prevent conflicts"
+    echo "  ✅ Cleaned and reinstalled all plugins with compatible versions"
     echo "  ✅ Installed Go development tools"
     echo ""
 

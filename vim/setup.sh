@@ -236,6 +236,11 @@ install_nodejs() {
 install_dev_tools() {
     log_info "Installing development tools..."
 
+    echo "Installing fzf"
+
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+
+
     case $OS in
         "ubuntu")
             sudo apt install -y \
@@ -243,7 +248,6 @@ install_dev_tools() {
                 fd-find \
                 universal-ctags \
                 silversearcher-ag \
-                fzf
 
             # Create symlink for fd if needed
             if ! command_exists fd && command_exists fdfind; then
@@ -256,7 +260,6 @@ install_dev_tools() {
                 fd \
                 universal-ctags \
                 the_silver_searcher \
-                fzf
             ;;
     esac
 
