@@ -1,0 +1,246 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "=== Installing Go dependencies for Vim ==="
+
+# Check if Go is installed
+if ! command -v go >/dev/null 2>&1; then
+  echo "❌ Go not found. Install it before running this script."
+  exit 1
+fi
+
+# Install gopls (official Go language server)
+echo "→ Installing gopls..."
+go install golang.org/x/tools/gopls@latest
+
+# Install Go linting tools
+echo "→ Installing Go linting tools..."
+go install golang.org/x/lint/golint@latest
+go install honnef.co/go/tools/cmd/staticcheck@latest
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+go install github.com/fatih/gomodifytags@latest
+go install github.com/josharian/impl@latest
+
+# Install vim-plug (Vim plugin manager)
+echo "→ Installing vim-plug..."
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# Create ~/.vimrc
+echo "→ Creating ~/.vimrc..."
+cat > ~/.vimrc <<'EOF'
+" ================================
+" ~/.vimrc - Go Configuration
+" ================================
+
+" --- Appearance ---
+set number              " Absolute number on current line
+set relativenumber      " Relative lines for navigation
+set cursorline          " Highlight current line
+set ruler               " Show cursor position
+set colorcolumn=120     " Mark column 120
+
+" --- Syntax and colors ---
+syntax on
+set termguicolors
+colorscheme desert      " Basic theme (can change later)
+
+" --- Indentation ---
+set smartindent
+set autoindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" --- Search ---
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+
+" --- Features ---
+set showmatch
+set nowrap
+set noerrorbells
+set visualbell
+
+" --- Plugins ---
+call plug#begin('~/.vim/plugged')
+
+" Go development
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" LSP configuration (for Neovim)
+Plug 'neovim/nvim-lspconfig'
+
+" Autocompletion
+Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
+Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
+Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
+Plug 'hrsh7th/cmp-path'          " Path completion source
+Plug 'hrsh7th/cmp-cmdline'       " Command line completion
+Plug 'L3MON4D3/LuaSnip'          " Snippet engine
+Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+
+" Alternative completion for classic Vim
+Plug 'lifepillar/vim-mucomplete'  " Lightweight completion for Vim
+
+" Linting and diagnostics
+Plug 'dense-analysis/ale'         " Asynchronous linting engine
+Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
+Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+
+" Beautiful statusline
+Plug 'vim-airline/vim-airline'
+
+" Icons (if you have nerd-fonts installed)
+Plug 'ryanoasis/vim-devicons'
+
+" File explorer
+Plug 'preservim/nerdtree'
+
+" Quick comments
+Plug 'tpope/vim-commentary'
+
+" Git
+Plug 'tpope/vim-fugitive'
+
+" Better syntax
+Plug 'sheerun/vim-polyglot'
+
+" Extra theme (optional)
+Plug 'morhetz/gruvbox'
+
+call plug#end()
+
+" --- ALE (Asynchronous Lint Engine) configurations ---
+let g:ale_linters = {
+\   'go': ['gopls', 'golint', 'go vet', 'golangci-lint', 'staticcheck'],
+\}
+let g:ale_fixers = {
+\   'go': ['goimports', 'gofmt'],
+\}
+let g:ale_fix_on_save = 1
+let g:ale_lint_on_text_changed = 'when_idle'
+let g:ale_lint_delay = 750
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠️'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" --- vim-go configurations ---
+let g:go_fmt_command = "goimports"   " Use goimports for formatting and auto-import
+let g:go_imports_autosave = 1        " Auto-import on save
+let g:go_fmt_autosave = 1            " Auto-format on save
+let g:go_mod_fmt_autosave = 1        " Auto-format go.mod files
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+let g:go_metalinter_autosave = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+
+" Enable LSP and completion features if using Neovim
+if has('nvim')
+lua << EOLUA
+-- LSP configuration
+require'lspconfig'.gopls.setup{
+    cmd = {"gopls"},
+    filetypes = {"go", "gomod"},
+    root_dir = require('lspconfig.util').root_pattern("go.mod", ".git"),
+    settings = {
+        gopls = {
+            analyses = {
+                unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+        },
+    },
+}
+
+-- Autocompletion setup
+local cmp = require'cmp'
+local luasnip = require'luasnip'
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+    }),
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+    }, {
+        { name = 'buffer' },
+        { name = 'path' },
+    })
+})
+
+-- Command line completion
+cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+        { name = 'buffer' }
+    }
+})
+
+cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = 'path' }
+    }, {
+        { name = 'cmdline' }
+    })
+})
+
+-- null-ls for additional linting and formatting
+local null_ls = require("null-ls")
+null_ls.setup({
+    sources = {
+        -- Go linters and formatters
+        null_ls.builtins.formatting.goimports,
+        null_ls.builtins.formatting.gofmt,
+        null_ls.builtins.diagnostics.golangci_lint,
+        null_ls.builtins.diagnostics.staticcheck,
+        null_ls.builtins.code_actions.gomodifytags,
+        null_ls.builtins.code_actions.impl,
+    },
+})
+EOLUA
+else
+    " Enable mucomplete for classic Vim
+    let g:mucomplete#enable_auto_at_startup = 1
+    let g:mucomplete#completion_delay = 1
+endif
+
+EOF
+
+echo "=== Finished! ==="
+echo "Now open Vim and run :PlugInstall to install the plugins."
