@@ -34,7 +34,7 @@ call plug#begin(expand('~/.vim/plugged'))
 "*****************************************************************************
 "" Plug install packages
 "*****************************************************************************
-Plug 'scrooloose/nerdtree'
+Plug 'preservim/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
@@ -84,7 +84,7 @@ Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 " LSP configuration (for Neovim only)
 if has('nvim')
   Plug 'neovim/nvim-lspconfig'
-  
+
   " Autocompletion (Neovim only)
   Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
   Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
