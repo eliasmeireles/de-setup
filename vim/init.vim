@@ -93,9 +93,9 @@ Plug 'hrsh7th/cmp-cmdline'       " Command line completion
 Plug 'L3MON4D3/LuaSnip'          " Snippet engine
 Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
 
-" Linting and diagnostics (null-ls for Neovim)
-Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
-Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+" Linting and diagnostics (none-ls for Neovim)
+Plug 'nvim-lua/plenary.nvim'      " Required for none-ls (Neovim)
+Plug 'nvimtools/none-ls.nvim'     " LSP diagnostics, formatting, and code actions (maintained fork)
 
 " Icons (if you have nerd-fonts installed)
 Plug 'ryanoasis/vim-devicons'
@@ -640,11 +640,12 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 " --- LSP and Completion Configuration for Neovim ---
 lua << EOLUA
--- LSP configuration
-require'lspconfig'.gopls.setup{
+-- LSP configuration (updated for Neovim 0.11+)
+local lspconfig = require('lspconfig')
+lspconfig.gopls.setup{
     cmd = {"gopls"},
     filetypes = {"go", "gomod"},
-    root_dir = require('lspconfig.util').root_pattern("go.mod", ".git"),
+    root_dir = lspconfig.util.root_pattern("go.mod", ".git"),
     settings = {
         gopls = {
             analyses = {
@@ -717,7 +718,7 @@ cmp.setup.cmdline(':', {
     })
 })
 
--- null-ls for additional linting and formatting
+-- none-ls for additional linting and formatting
 local null_ls = require("null-ls")
 null_ls.setup({
     sources = {

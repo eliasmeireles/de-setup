@@ -15,7 +15,7 @@ A comprehensive development environment setup for Vim and Neovim with enhanced G
 vim/
 ├── .vimrc          # Vim configuration (compatible with both Vim and Neovim)
 ├── init.vim        # Neovim-specific configuration
-├── setup           # Installation script
+├── setup.sh        # Automated installation script (Ubuntu/macOS)
 └── README.md       # This file
 ```
 
@@ -100,24 +100,33 @@ fc-cache -fv
 
 ## 🛠️ Installation
 
-### Quick Setup
+### 🚀 Automated Setup (Recommended)
 ```bash
 # Navigate to the vim directory
 cd /path/to/de-setup/vim
 
-# For Vim users
-cp .vimrc ~/.vimrc
+# Make the setup script executable
+chmod +x setup.sh
 
-# For Neovim users
-mkdir -p ~/.config/nvim
-cp init.vim ~/.config/nvim/init.vim
-
-# Make setup script executable and run it
-chmod +x setup
-./setup
+# Run the automated setup (works on Ubuntu/Debian and macOS)
+./setup.sh
 ```
 
-### Manual Installation
+The automated script will:
+- ✅ Detect your operating system (Ubuntu/macOS)
+- ✅ Install all required dependencies
+- ✅ Install Vim and Neovim
+- ✅ Install Go and Go development tools
+- ✅ Install Node.js for LSP features
+- ✅ Install development tools (ripgrep, fd, ctags, etc.)
+- ✅ Install Nerd Fonts for icons
+- ✅ Setup vim-plug plugin manager
+- ✅ Copy and configure .vimrc and init.vim
+- ✅ Install all plugins automatically
+- ✅ Install vim-go binaries
+
+### 📋 Manual Setup
+If you prefer manual installation or the automated script doesn't work:
 
 #### For Vim (.vimrc)
 ```bash
@@ -312,6 +321,38 @@ require'lspconfig'.gopls.setup{
 ```
 
 ## 🐛 Troubleshooting
+
+### Automated Setup Issues
+
+#### Script Permission Denied
+```bash
+# Make the script executable
+chmod +x setup.sh
+```
+
+#### macOS: Command Line Tools Missing
+```bash
+# Install Xcode Command Line Tools
+xcode-select --install
+```
+
+#### Ubuntu: Package Installation Fails
+```bash
+# Update package lists
+sudo apt update
+
+# Fix broken packages
+sudo apt --fix-broken install
+```
+
+#### Go Tools Installation Fails
+```bash
+# Ensure Go is in PATH
+export PATH=$PATH:/usr/local/go/bin
+
+# Manually install Go tools
+go install golang.org/x/tools/gopls@latest
+```
 
 ### Common Issues
 

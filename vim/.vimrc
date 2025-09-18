@@ -100,10 +100,10 @@ if !has('nvim')
   Plug 'lifepillar/vim-mucomplete'  " Lightweight completion for Vim
 endif
 
-" Linting and diagnostics (null-ls for Neovim only)
+" Linting and diagnostics (none-ls for Neovim only)
 if has('nvim')
-  Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
-  Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+  Plug 'nvim-lua/plenary.nvim'      " Required for none-ls (Neovim)
+  Plug 'nvimtools/none-ls.nvim'     " LSP diagnostics, formatting, and code actions (maintained fork)
 endif
 
 " Icons (if you have nerd-fonts installed)
@@ -658,11 +658,12 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 " Enable LSP and completion features if using Neovim
 if has('nvim')
 lua << EOLUA
--- LSP configuration
-require'lspconfig'.gopls.setup{
+-- LSP configuration (updated for Neovim 0.11+)
+local lspconfig = require('lspconfig')
+lspconfig.gopls.setup{
     cmd = {"gopls"},
     filetypes = {"go", "gomod"},
-    root_dir = require('lspconfig.util').root_pattern("go.mod", ".git"),
+    root_dir = lspconfig.util.root_pattern("go.mod", ".git"),
     settings = {
         gopls = {
             analyses = {
@@ -735,7 +736,7 @@ cmp.setup.cmdline(':', {
     })
 })
 
--- null-ls for additional linting and formatting
+-- none-ls for additional linting and formatting
 local null_ls = require("null-ls")
 null_ls.setup({
     sources = {
