@@ -154,6 +154,26 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit'
   \ }
 
+" Enhanced fzf configuration with preview (similar to your shell aliases)
+let g:fzf_preview_script = expand('~/workspace/personal/utils/de-setup/scripts/fzf-preview.sh')
+
+" Configure preview options with file info display
+if filereadable(g:fzf_preview_script)
+  let g:fzf_files_options = '--preview "' . g:fzf_preview_script . ' {}" --bind "focus:transform-header:file --brief {}" --preview-window=right:60%'
+else
+  " Fallback preview options with file info
+  if executable('bat')
+    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  elseif executable('highlight')
+    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  else
+    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  endif
+endif
+
+" Set global fzf options for fzf.vim commands
+let $FZF_DEFAULT_OPTS = g:fzf_files_options
+
 
 " vim-easymotion - Vim motions on speed!
 Plug 'easymotion/vim-easymotion'
@@ -381,7 +401,7 @@ cnoreabbrev Q q
 cnoreabbrev Qall qall
 
 "" NERDTree configuration
-let g:NERDTreeChDirMode=2
+let g:NERDTreeChDirMode=0
 let g:NERDTreeIgnore=['node_modules','\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
 let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
 let g:NERDTreeShowBookmarks=1
@@ -389,7 +409,7 @@ let g:nerdtree_tabs_focus_on_files=1
 let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
 let g:NERDTreeWinSize = 50
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite,*node_modules/
-nnoremap <silent> <F2> :NERDTreeFind<CR>
+nnoremap <silent> <F2> :NERDTreeCWD<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
 " grep.vim
@@ -507,7 +527,10 @@ endif
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>e :FZF -m<CR>
+" Enhanced file finder with preview (similar to your laff/vff aliases)
+nnoremap <silent> <leader>e :call fzf#run(fzf#wrap({'options': g:fzf_files_options . ' -m'}))<CR>
+" Alternative using fzf.vim Files command with preview
+nnoremap <silent> <leader>ff :Files<CR>
 "Recovery commands from history through FZF
 nmap <leader>y :History:<CR>
 
