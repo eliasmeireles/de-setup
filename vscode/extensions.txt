@@ -1,17 +1,24 @@
-# code Extensions List
-# Generated on: Fri Sep  5 08:01:29 AM -03 2025
-# Target: code
+# windsurf Extensions List
+# Generated on: Thu Sep 18 01:37:22 PM -03 2025
+# Target: windsurf
 
-chadalen.vscode-jetbrains-icon-theme
+42crunch.vscode-openapi
+adpyke.codesnap
+ardonplay.jetbrains-idea-product-icon-theme
+ardonplay.vscode-jetbrains-icon-theme
 compassak.intellij-idea-new-ui
 docker.docker
 eliasmeireles.pretty-git-diff
+formulahendry.code-runner
+github.vscode-github-actions
 golang.go
-jflbr.jwt-decoder
 k--kato.intellij-idea-keybindings
 ms-azuretools.vscode-containers
 ms-azuretools.vscode-docker
-ms-vscode-remote.remote-containers
+ms-vscode.makefile-tools
+pkief.material-icon-theme
+r3inbowari.gomodexplorer
+redhat.vscode-yaml
 sonarsource.sonarlint-vscode
 vscodevim.vim
 yzhang.markdown-all-in-one
