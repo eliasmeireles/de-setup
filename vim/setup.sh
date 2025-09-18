@@ -238,6 +238,7 @@ install_dev_tools() {
 
     echo "Installing fzf"
 
+    rm -rf ~/.fzf || true
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
 
 
