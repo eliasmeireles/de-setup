@@ -2,6 +2,13 @@
 
 A comprehensive development environment setup for Vim and Neovim with enhanced Go development capabilities, modern LSP integration, and professional IDE-like features.
 
+---
+
+## Reference
+- [Vim Bootstrap](https://vim-bootstrap.com/#generator)
+
+---
+
 ## 📁 Project Structure
 
 ```
