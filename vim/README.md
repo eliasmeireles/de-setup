@@ -218,6 +218,19 @@ The leader key is set to `,` (comma). All leader-based commands start with `,`.
 | `gc` | Comment/uncomment selection |
 | `,<space>` | Clear search highlight |
 
+### Enhanced Search Features
+| Command | Description |
+|---------|-------------|
+| `/` | Search forward (with suggestions) |
+| `?` | Search backward (with suggestions) |
+| `*` | Search word under cursor |
+| `#` | Search word under cursor (backward) |
+| `,*` | Search word under cursor with count |
+| `,s` | Search and replace current word |
+| `n` | Next search result |
+| `N` | Previous search result |
+| `,<space>` | Clear search highlighting |
+
 ### Git Integration
 | Command | Description |
 |---------|-------------|

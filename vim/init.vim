@@ -213,11 +213,20 @@ let mapleader=','
 "" Enable hidden buffers
 set hidden
 
-"" Searching
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
+"" Enhanced Searching
+set hlsearch            " Highlight search results
+set incsearch           " Incremental search (show matches as you type)
+set ignorecase          " Case insensitive search
+set smartcase           " Case sensitive when uppercase present
+set wrapscan            " Wrap around when searching
+set magic               " Enable regular expressions
+
+" Enhanced search completion
+set wildmenu            " Command-line completion
+set wildmode=longest:full,full
+set wildignore+=*.o,*.obj,*.pyc,*.class,*.git,*.svn,*.hg
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.tar.gz,*.tar.bz2
+set wildignore+=*/node_modules/*,*/bower_components/*
 
 set fileformats=unix,dos,mac
 
@@ -527,8 +536,37 @@ noremap <leader>w :bn<CR>
 "" Close buffer
 noremap <leader>c :bd<CR>
 
-"" Clean search (highlight)
+"" Enhanced Search Mappings
+" Clear search highlight
 nnoremap <silent> <leader><space> :noh<cr>
+
+" Search for word under cursor with count
+nnoremap <leader>* *<C-O>:%s///gn<CR>
+
+" Search and replace current word
+nnoremap <leader>s :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>
+
+" Visual mode search for selected text
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+" Function for visual selection search
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", "\/$.*'[]^~")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'gv'
+        call CmdLine("Ack \"" . l:pattern . "\" " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
 
 "" Switching windows
 noremap <C-j> <C-w>j
