@@ -81,24 +81,30 @@ Plug 'honza/vim-snippets'
 "" Go Lang Bundle
 Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 
-" LSP configuration (for Neovim)
-Plug 'neovim/nvim-lspconfig'
+" LSP configuration (for Neovim only)
+if has('nvim')
+  Plug 'neovim/nvim-lspconfig'
+  
+  " Autocompletion (Neovim only)
+  Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
+  Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
+  Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
+  Plug 'hrsh7th/cmp-path'          " Path completion source
+  Plug 'hrsh7th/cmp-cmdline'       " Command line completion
+  Plug 'L3MON4D3/LuaSnip'          " Snippet engine
+  Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+endif
 
-" Autocompletion
-Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
-Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
-Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
-Plug 'hrsh7th/cmp-path'          " Path completion source
-Plug 'hrsh7th/cmp-cmdline'       " Command line completion
-Plug 'L3MON4D3/LuaSnip'          " Snippet engine
-Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+" Alternative completion for classic Vim (only load if not Neovim)
+if !has('nvim')
+  Plug 'lifepillar/vim-mucomplete'  " Lightweight completion for Vim
+endif
 
-" Alternative completion for classic Vim
-Plug 'lifepillar/vim-mucomplete'  " Lightweight completion for Vim
-
-" Linting and diagnostics (null-ls for Neovim)
-Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
-Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+" Linting and diagnostics (null-ls for Neovim only)
+if has('nvim')
+  Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
+  Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+endif
 
 " Icons (if you have nerd-fonts installed)
 Plug 'ryanoasis/vim-devicons'
@@ -744,9 +750,16 @@ null_ls.setup({
 })
 EOLUA
 else
-    " Enable mucomplete for classic Vim
-    let g:mucomplete#enable_auto_at_startup = 1
-    let g:mucomplete#completion_delay = 1
+    " Enable mucomplete for classic Vim only
+    if exists('g:loaded_mucomplete')
+        let g:mucomplete#enable_auto_at_startup = 1
+        let g:mucomplete#completion_delay = 1
+        " Disable Tab mapping to avoid conflicts
+        let g:mucomplete#no_mappings = 1
+        " Use custom mappings
+        imap <expr> <C-j> mucomplete#extend_fwd("\<C-j>")
+        imap <expr> <C-k> mucomplete#extend_bwd("\<C-k>")
+    endif
 endif
 
 " html

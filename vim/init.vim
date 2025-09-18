@@ -50,6 +50,7 @@ Plug 'Yggdroot/indentLine'
 Plug 'editor-bootstrap/vim-bootstrap-updater'
 Plug 'tpope/vim-rhubarb' " required by fugitive to :GBrowse
 Plug 'tomasr/molokai'
+Plug 'morhetz/gruvbox'  " Additional theme
 
 
 if isdirectory('/usr/local/opt/fzf')
@@ -78,7 +79,29 @@ Plug 'honza/vim-snippets'
 
 " go
 "" Go Lang Bundle
-Plug 'fatih/vim-go', {'do': ':GoInstallBinaries'}
+Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
+
+" LSP configuration (for Neovim)
+Plug 'neovim/nvim-lspconfig'
+
+" Autocompletion
+Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
+Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
+Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
+Plug 'hrsh7th/cmp-path'          " Path completion source
+Plug 'hrsh7th/cmp-cmdline'       " Command line completion
+Plug 'L3MON4D3/LuaSnip'          " Snippet engine
+Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+
+" Linting and diagnostics (null-ls for Neovim)
+Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
+Plug 'jose-elias-alvarez/null-ls.nvim' " LSP diagnostics, formatting, and code actions
+
+" Icons (if you have nerd-fonts installed)
+Plug 'ryanoasis/vim-devicons'
+
+" Better syntax highlighting
+Plug 'sheerun/vim-polyglot'
 
 
 " html
@@ -154,12 +177,26 @@ set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
 
-" --- Appearance ---
+" --- Enhanced Appearance Settings ---
 set number              " Absolute number on current line
 set relativenumber      " Relative lines for navigation
 set cursorline          " Highlight current line
 set ruler               " Show cursor position
 set colorcolumn=120     " Mark column 120
+set showmatch           " Show matching brackets
+set nowrap              " Don't wrap lines
+set noerrorbells        " No error bells
+set visualbell          " Use visual bell instead of beeping
+
+" Enhanced search settings
+set ignorecase          " Case insensitive search
+set smartcase           " Case sensitive when uppercase present
+set hlsearch            " Highlight search results
+set incsearch           " Incremental search
+
+" Enhanced indentation
+set smartindent         " Smart indentation
+set autoindent          " Auto indentation
 
 "" Fix backspace indent
 set backspace=indent,eol,start
@@ -204,13 +241,31 @@ set ruler
 set number
 
 let no_buffers_menu=1
+
+" --- Enhanced Theme Configuration ---
+" Enable true colors if supported
+if has('termguicolors')
+  set termguicolors
+endif
+
 " Set colorscheme with fallback
 try
-  colorscheme molokai
-catch /^Vim\%((\a\+)\)\=:E185/
-  " Fallback to default colorscheme if molokai is not available
-  colorscheme default
+  colorscheme gruvbox
+  " Optional: set gruvbox options
+  let g:gruvbox_contrast_dark = 'medium'
+  let g:gruvbox_improved_strings = 1
+  let g:gruvbox_improved_warnings = 1
+catch
+  try
+    colorscheme molokai
+  catch
+    colorscheme desert
+  endtry
 endtry
+
+" Background setting (uncomment one)
+set background=dark
+" set background=light
 
 
 " Better command line completion
@@ -508,13 +563,21 @@ function! s:build_go_files()
   endif
 endfunction
 
+" --- Enhanced vim-go configurations ---
 let g:go_list_type = "quickfix"
-let g:go_fmt_command = "goimports"
+let g:go_fmt_command = "goimports"   " Use goimports for formatting and auto-import
 let g:go_fmt_fail_silently = 1
+let g:go_imports_autosave = 1        " Auto-import on save
+let g:go_fmt_autosave = 1            " Auto-format on save
+let g:go_mod_fmt_autosave = 1        " Auto-format go.mod files
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+let g:go_metalinter_autosave = 1
 
+" Enhanced syntax highlighting
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
@@ -559,9 +622,115 @@ augroup go
 
 augroup END
 
-" ale
-:call extend(g:ale_linters, {
-    \"go": ['golint', 'go vet'], })
+" --- Enhanced ALE (Asynchronous Lint Engine) configurations ---
+let g:ale_linters = get(g:, 'ale_linters', {})
+let g:ale_fixers = get(g:, 'ale_fixers', {})
+
+" Go linters and fixers
+let g:ale_linters.go = ['gopls', 'golint', 'go vet', 'golangci-lint', 'staticcheck']
+let g:ale_fixers.go = ['goimports', 'gofmt']
+
+" ALE behavior
+let g:ale_fix_on_save = 1
+let g:ale_lint_on_text_changed = 'when_idle'
+let g:ale_lint_delay = 750
+let g:ale_sign_error = '❌'
+let g:ale_sign_warning = '⚠️'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" --- LSP and Completion Configuration for Neovim ---
+lua << EOLUA
+-- LSP configuration
+require'lspconfig'.gopls.setup{
+    cmd = {"gopls"},
+    filetypes = {"go", "gomod"},
+    root_dir = require('lspconfig.util').root_pattern("go.mod", ".git"),
+    settings = {
+        gopls = {
+            analyses = {
+                unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+        },
+    },
+}
+
+-- Autocompletion setup
+local cmp = require'cmp'
+local luasnip = require'luasnip'
+
+cmp.setup({
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.abort(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+    }),
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+    }, {
+        { name = 'buffer' },
+        { name = 'path' },
+    })
+})
+
+-- Command line completion
+cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+        { name = 'buffer' }
+    }
+})
+
+cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = 'path' }
+    }, {
+        { name = 'cmdline' }
+    })
+})
+
+-- null-ls for additional linting and formatting
+local null_ls = require("null-ls")
+null_ls.setup({
+    sources = {
+        -- Go linters and formatters
+        null_ls.builtins.formatting.goimports,
+        null_ls.builtins.formatting.gofmt,
+        null_ls.builtins.diagnostics.golangci_lint,
+        null_ls.builtins.diagnostics.staticcheck,
+        null_ls.builtins.code_actions.gomodifytags,
+        null_ls.builtins.code_actions.impl,
+    },
+})
+EOLUA
 
 
 " html
