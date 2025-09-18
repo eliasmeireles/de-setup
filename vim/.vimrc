@@ -163,11 +163,11 @@ if filereadable(g:fzf_preview_script)
 else
   " Fallback preview options with file info
   if executable('bat')
-    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
   elseif executable('highlight')
-    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
   else
-    let g:fzf_files_options = 'fzf --style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
   endif
 endif
 
@@ -554,9 +554,7 @@ if has('autocmd')
 endif
 
 "" Copy/Paste/Cut
-if has('unnamedplus')
-  set clipboard=unnamed,unnamedplus
-endif
+set clipboard=unnamedplus
 
 noremap YY "+y<CR>
 noremap <leader>p "+gP<CR>

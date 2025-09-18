@@ -145,6 +145,26 @@ let g:fzf_action = {
   \ 'ctrl-v': 'vsplit'
   \ }
 
+" Enhanced fzf configuration with preview (similar to your shell aliases)
+let g:fzf_preview_script = expand('~/workspace/personal/utils/de-setup/scripts/fzf-preview.sh')
+
+" Configure preview options with file info display
+if filereadable(g:fzf_preview_script)
+  let g:fzf_files_options = '--preview "' . g:fzf_preview_script . ' {}" --bind "focus:transform-header:file --brief {}" --preview-window=right:60%'
+else
+  " Fallback preview options with file info
+  if executable('bat')
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  elseif executable('highlight')
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  else
+    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
+  endif
+endif
+
+" Set global fzf options for fzf.vim commands
+let $FZF_DEFAULT_OPTS = g:fzf_files_options
+
 
 " vim-easymotion - Vim motions on speed!
 Plug 'easymotion/vim-easymotion'
@@ -489,7 +509,10 @@ endif
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>e :FZF -m<CR>
+" Enhanced file finder with preview (similar to your laff/vff aliases)
+nnoremap <silent> <leader>e :call fzf#run(fzf#wrap({'options': g:fzf_files_options . ' -m'}))<CR>
+" Alternative using fzf.vim Files command with preview
+nnoremap <silent> <leader>ff :Files<CR>
 "Recovery commands from history through FZF
 nmap <leader>y :History:<CR>
 
@@ -512,10 +535,7 @@ if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
 endif
 
-"" Copy/Paste/Cut
-if has('unnamedplus')
-  set clipboard=unnamed,unnamedplus
-endif
+set clipboard=unnamedplus
 
 noremap YY "+y<CR>
 noremap <leader>p "+gP<CR>
