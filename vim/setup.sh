@@ -58,7 +58,7 @@ detect_os() {
         log_error "Unsupported operating system: $OSTYPE"
         exit 1
     fi
-    
+
     log_info "Detected OS: $OS"
 }
 
@@ -72,7 +72,7 @@ install_homebrew() {
     if ! command_exists brew; then
         log_info "Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        
+
         # Add Homebrew to PATH for Apple Silicon Macs
         if [[ $(uname -m) == "arm64" ]]; then
             echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
@@ -81,7 +81,7 @@ install_homebrew() {
             echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zshrc
             eval "$(/usr/local/bin/brew shellenv)"
         fi
-        
+
         log_success "Homebrew installed successfully"
     else
         log_info "Homebrew already installed"
@@ -91,7 +91,7 @@ install_homebrew() {
 # Update package manager
 update_packages() {
     log_info "Updating package manager..."
-    
+
     case $OS in
         "ubuntu")
             sudo apt update && sudo apt upgrade -y
@@ -100,14 +100,14 @@ update_packages() {
             brew update && brew upgrade
             ;;
     esac
-    
+
     log_success "Package manager updated"
 }
 
 # Install basic dependencies
 install_basic_deps() {
     log_info "Installing basic dependencies..."
-    
+
     case $OS in
         "ubuntu")
             sudo apt install -y \
@@ -127,23 +127,23 @@ install_basic_deps() {
             if ! command_exists git; then
                 xcode-select --install
             fi
-            
+
             brew install curl wget
             ;;
     esac
-    
+
     log_success "Basic dependencies installed"
 }
 
 # Install Vim and Neovim
 install_vim_neovim() {
     log_info "Installing Vim and Neovim..."
-    
+
     case $OS in
         "ubuntu")
             # Install Vim
             sudo apt install -y vim
-            
+
             # Install Neovim (latest stable)
             if ! command_exists nvim; then
                 # Try package manager first
@@ -160,7 +160,7 @@ install_vim_neovim() {
             brew install vim neovim
             ;;
     esac
-    
+
     log_success "Vim and Neovim installed"
 }
 
@@ -170,14 +170,14 @@ install_go() {
         log_info "Go already installed: $(go version)"
         return
     fi
-    
+
     log_info "Installing Go..."
-    
+
     case $OS in
         "ubuntu")
             # Remove any existing Go installation
             sudo rm -rf /usr/local/go
-            
+
             # Download and install latest Go
             GO_VERSION="1.21.5"
             ARCH=$(uname -m)
@@ -186,11 +186,11 @@ install_go() {
                 "aarch64") GO_ARCH="arm64" ;;
                 *) log_error "Unsupported architecture: $ARCH"; exit 1 ;;
             esac
-            
+
             wget "https://go.dev/dl/go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
             sudo tar -C /usr/local -xzf "go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
             rm "go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
-            
+
             # Add to PATH
             echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
             echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
@@ -198,15 +198,15 @@ install_go() {
             ;;
         "macos")
             brew install go
-            
+
             # Add GOPATH to shell profile
             echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
             ;;
     esac
-    
+
     # Reload PATH
     export PATH=$PATH:$(go env GOPATH)/bin 2>/dev/null || true
-    
+
     log_success "Go installed: $(go version 2>/dev/null || echo 'Go installed, restart shell to use')"
 }
 
@@ -216,9 +216,9 @@ install_nodejs() {
         log_info "Node.js already installed: $(node --version)"
         return
     fi
-    
+
     log_info "Installing Node.js..."
-    
+
     case $OS in
         "ubuntu")
             curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -228,14 +228,14 @@ install_nodejs() {
             brew install node
             ;;
     esac
-    
+
     log_success "Node.js installed: $(node --version)"
 }
 
 # Install development tools
 install_dev_tools() {
     log_info "Installing development tools..."
-    
+
     case $OS in
         "ubuntu")
             sudo apt install -y \
@@ -244,7 +244,7 @@ install_dev_tools() {
                 universal-ctags \
                 silversearcher-ag \
                 fzf
-            
+
             # Create symlink for fd if needed
             if ! command_exists fd && command_exists fdfind; then
                 sudo ln -sf $(which fdfind) /usr/local/bin/fd
@@ -259,49 +259,68 @@ install_dev_tools() {
                 fzf
             ;;
     esac
-    
+
     log_success "Development tools installed"
 }
 
 # Install Go tools
 install_go_tools() {
     log_info "Installing Go development tools..."
-    
+
     # Ensure Go is in PATH
     export PATH=$PATH:/usr/local/go/bin:$(go env GOPATH)/bin 2>/dev/null || true
-    
+
     if ! command_exists go; then
         log_warning "Go not found in PATH, skipping Go tools installation"
         return
     fi
-    
-    # Install Go tools (using versions compatible with Go 1.23.4)
-    go install golang.org/x/tools/gopls@v0.16.1
-    go install golang.org/x/tools/cmd/goimports@v0.25.0
-    go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-    go install honnef.co/go/tools/cmd/staticcheck@latest
-    go install github.com/fatih/gomodifytags@latest
-    go install github.com/josharian/impl@latest
-    
-    log_success "Go tools installed"
+
+    # Check Go version and handle compatibility
+    GO_VERSION=$(go version | grep -oE 'go[0-9]+\.[0-9]+' | sed 's/go//')
+    log_info "Detected Go version: $GO_VERSION"
+
+    # Install Go tools with error handling for compatibility issues
+    install_go_tool() {
+        local tool=$1
+        local version=$2
+        log_info "Installing $tool..."
+        if ! go install "$tool@$version" 2>/dev/null; then
+            log_warning "Failed to install $tool@$version, trying latest stable..."
+            if ! go install "$tool@latest" 2>/dev/null; then
+                log_warning "Failed to install $tool, skipping..."
+                return 1
+            fi
+        fi
+        return 0
+    }
+
+    # Install tools with fallback versions
+    install_go_tool "golang.org/x/tools/gopls" "v0.15.3" || true
+    install_go_tool "golang.org/x/tools/cmd/goimports" "v0.21.0" || true
+    install_go_tool "github.com/golangci/golangci-lint/cmd/golangci-lint" "v1.54.2" || true
+    install_go_tool "honnef.co/go/tools/cmd/staticcheck" "2023.1.6" || true
+    install_go_tool "github.com/fatih/gomodifytags" "latest" || true
+    install_go_tool "github.com/josharian/impl" "latest" || true
+
+    log_success "Go tools installation completed (some tools may have been skipped due to compatibility)"
 }
 
 # Install Nerd Fonts
 install_nerd_fonts() {
     log_info "Installing Nerd Fonts..."
-    
+
     case $OS in
         "ubuntu")
             mkdir -p ~/.local/share/fonts
             cd ~/.local/share/fonts
-            
+
             # Download popular Nerd Fonts
             fonts=(
                 "DroidSansMono"
                 "FiraCode"
                 "JetBrainsMono"
             )
-            
+
             for font in "${fonts[@]}"; do
                 if [ ! -f "${font}*.ttf" ] && [ ! -f "${font}*.otf" ]; then
                     log_info "Downloading ${font} Nerd Font..."
@@ -311,7 +330,7 @@ install_nerd_fonts() {
                     rm "${font}.zip"
                 fi
             done
-            
+
             # Refresh font cache
             fc-cache -fv
             cd - > /dev/null
@@ -324,21 +343,21 @@ install_nerd_fonts() {
                 font-jetbrains-mono-nerd-font
             ;;
     esac
-    
+
     log_success "Nerd Fonts installed"
 }
 
 # Install vim-plug
 install_vim_plug() {
     log_info "Installing vim-plug..."
-    
+
     # For Vim
     if [ ! -f ~/.vim/autoload/plug.vim ]; then
         curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         log_success "vim-plug installed for Vim"
     fi
-    
+
     # For Neovim
     NVIM_PLUG_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload"
     if [ ! -f "$NVIM_PLUG_DIR/plug.vim" ]; then
@@ -351,32 +370,34 @@ install_vim_plug() {
 # Setup configurations
 setup_configs() {
     log_info "Setting up Vim/Neovim configurations..."
-    
+
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    
+
     # Backup existing configs
+    mkdir -p ~/.config/nvim/ || true
+
     [ -f ~/.vimrc ] && cp ~/.vimrc ~/.vimrc.backup.$(date +%Y%m%d_%H%M%S)
+
     [ -f ~/.config/nvim/init.vim ] && cp ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup.$(date +%Y%m%d_%H%M%S)
-    
+
     # Copy new configs
     cp "$SCRIPT_DIR/.vimrc" ~/.vimrc
-    
+
     mkdir -p ~/.config/nvim
     cp "$SCRIPT_DIR/init.vim" ~/.config/nvim/init.vim
-    
     log_success "Configurations copied"
 }
 
 # Install plugins
 install_plugins() {
     log_info "Installing Vim plugins..."
-    
+
     # Install Vim plugins
     if command_exists vim; then
         vim +PlugClean! +PlugInstall +qall
         log_success "Vim plugins installed"
     fi
-    
+
     # Install Neovim plugins
     if command_exists nvim; then
         nvim +PlugClean! +PlugInstall +qall
@@ -387,26 +408,26 @@ install_plugins() {
 # Install Go binaries for vim-go
 install_vim_go_binaries() {
     log_info "Installing vim-go binaries..."
-    
+
     if command_exists vim && command_exists go; then
         vim +GoInstallBinaries +qall 2>/dev/null || true
     fi
-    
+
     if command_exists nvim && command_exists go; then
         nvim +GoUpdateBinaries +qall 2>/dev/null || true
     fi
-    
+
     log_success "vim-go binaries installed"
 }
 
 # Print final instructions
 print_final_instructions() {
     log_header "INSTALLATION COMPLETE!"
-    
+
     echo -e "${GREEN}✅ Vim and Neovim are configured with Go development features${NC}"
     echo -e "${GREEN}✅ All plugins and tools have been installed${NC}"
     echo ""
-    
+
     log_info "Key features available:"
     echo "  • Modern LSP integration (Neovim)"
     echo "  • Smart autocompletion"
@@ -415,7 +436,7 @@ print_final_instructions() {
     echo "  • Multiple themes (Gruvbox, Molokai, Desert)"
     echo "  • Enhanced syntax highlighting"
     echo ""
-    
+
     log_info "Quick start commands:"
     echo "  • vim <file>     - Open file in Vim"
     echo "  • nvim <file>    - Open file in Neovim"
@@ -424,7 +445,7 @@ print_final_instructions() {
     echo "  • ,r             - Run Go file"
     echo "  • ,t             - Run Go tests"
     echo ""
-    
+
     log_warning "Please restart your terminal or run 'source ~/.bashrc' (Linux) or 'source ~/.zshrc' (macOS)"
     log_info "Read the README.md for complete documentation and key mappings"
 }
@@ -432,21 +453,21 @@ print_final_instructions() {
 # Main installation function
 main() {
     log_header "VIM/NEOVIM DEVELOPMENT ENVIRONMENT SETUP"
-    
+
     # Check if running as root
     if [[ $EUID -eq 0 ]]; then
         log_error "This script should not be run as root"
         exit 1
     fi
-    
+
     # Detect OS
     detect_os
-    
+
     # Install package manager for macOS
     if [[ $OS == "macos" ]]; then
         install_homebrew
     fi
-    
+
     # Installation steps
     update_packages
     install_basic_deps
@@ -460,7 +481,7 @@ main() {
     setup_configs
     install_plugins
     install_vim_go_binaries
-    
+
     # Final instructions
     print_final_instructions
 }

@@ -40,7 +40,7 @@ log_header() {
 # Main fix function
 main() {
     log_header "VIM/NEOVIM CONFIGURATION FIX"
-    
+
     log_info "Fixing multiple issues:"
     echo "  • Tab mapping conflicts in vim-mucomplete"
     echo "  • Deprecated null-ls.nvim compatibility"
@@ -51,12 +51,12 @@ main() {
     # Create backups
     log_info "Creating configuration backups..."
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    
+
     if [ -f ~/.vimrc ]; then
         cp ~/.vimrc ~/.vimrc.backup.$TIMESTAMP
         log_success "Backed up ~/.vimrc"
     fi
-    
+
     if [ -f ~/.config/nvim/init.vim ]; then
         cp ~/.config/nvim/init.vim ~/.config/nvim/init.vim.backup.$TIMESTAMP
         log_success "Backed up ~/.config/nvim/init.vim"
@@ -71,28 +71,28 @@ main() {
 
     # Remove problematic plugins completely
     log_info "Removing problematic plugins..."
-    
+
     # Remove old null-ls and mucomplete plugins
     rm -rf ~/.vim/plugged/vim-mucomplete
     rm -rf ~/.vim/plugged/null-ls.nvim
     rm -rf ~/.config/nvim/plugged/null-ls.nvim
     rm -rf ~/.config/nvim/plugged/jose-elias-alvarez
-    
+
     log_success "Problematic plugins removed"
 
     # Clean plugin directories
     log_info "Cleaning plugin directories..."
-    
+
     # Clean Vim plugins
     if command -v vim &> /dev/null; then
         vim +PlugClean! +qall 2>/dev/null || log_warning "Vim plugin cleanup completed with warnings"
     fi
-    
+
     # Clean Neovim plugins
     if command -v nvim &> /dev/null; then
         nvim +PlugClean! +qall 2>/dev/null || log_warning "Neovim plugin cleanup completed with warnings"
     fi
-    
+
     log_success "Plugin directories cleaned"
 
     # Install plugins for Vim
@@ -161,15 +161,15 @@ main() {
     # Install Go binaries if Go is available
     if command -v go &> /dev/null; then
         log_info "Installing Go development tools..."
-        
+
         if command -v vim &> /dev/null; then
             vim +GoInstallBinaries +qall 2>/dev/null || log_warning "Vim Go binaries installation completed with warnings"
         fi
-        
+
         if command -v nvim &> /dev/null; then
             nvim +GoUpdateBinaries +qall 2>/dev/null || log_warning "Neovim Go binaries installation completed with warnings"
         fi
-        
+
         log_success "Go development tools installed"
     else
         log_warning "Go not found, skipping Go tools installation"
@@ -177,7 +177,7 @@ main() {
 
     # Final status report
     log_header "FIX COMPLETE!"
-    
+
     log_success "All fixes have been applied successfully!"
     echo ""
     log_info "Changes made:"
@@ -187,7 +187,7 @@ main() {
     echo "  ✅ Cleaned and reinstalled all plugins"
     echo "  ✅ Installed Go development tools"
     echo ""
-    
+
     log_info "Key mappings for completion:"
     echo "  📝 Vim (mucomplete):"
     echo "     • Ctrl+j - Next completion"
@@ -199,7 +199,7 @@ main() {
     echo "     • Shift+Tab - Previous completion"
     echo "     • Ctrl+Space - Manual trigger"
     echo ""
-    
+
     log_info "Go development commands:"
     echo "  🚀 ,r - Run Go file"
     echo "  🧪 ,t - Run Go tests"
@@ -207,12 +207,12 @@ main() {
     echo "  🔍 ,i - Show Go info"
     echo "  🔧 ,l - Run metalinter"
     echo ""
-    
+
     log_info "If you still encounter issues, try:"
     echo "  vim +PlugClean +PlugInstall +qall"
     echo "  nvim +PlugClean +PlugInstall +qall"
     echo ""
-    
+
     log_warning "Please restart your terminal or reload your shell configuration"
 }
 
