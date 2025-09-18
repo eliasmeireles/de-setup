@@ -275,9 +275,9 @@ install_go_tools() {
         return
     fi
     
-    # Install Go tools
-    go install golang.org/x/tools/gopls@latest
-    go install golang.org/x/tools/cmd/goimports@latest
+    # Install Go tools (using versions compatible with Go 1.23.4)
+    go install golang.org/x/tools/gopls@v0.16.1
+    go install golang.org/x/tools/cmd/goimports@v0.25.0
     go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
     go install honnef.co/go/tools/cmd/staticcheck@latest
     go install github.com/fatih/gomodifytags@latest
@@ -317,8 +317,7 @@ install_nerd_fonts() {
             cd - > /dev/null
             ;;
         "macos")
-            # Install via Homebrew Cask
-            brew tap homebrew/cask-fonts
+            # Install via Homebrew Cask (using updated tap)
             brew install --cask \
                 font-droid-sans-mono-nerd-font \
                 font-fira-code-nerd-font \
