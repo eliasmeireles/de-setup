@@ -758,16 +758,66 @@ let g:ale_disable_lsp = 1
 " LSP and completion plugins disabled to avoid conflicts
 " Using ALE and built-in features instead
 
-" Built-in completion settings for Neovim
+" Enhanced completion settings for Neovim
 if has('nvim')
-  " Enable built-in completion
-  set completeopt=menu,menuone,noselect
+  " Enable better completion options
+  set completeopt=menu,menuone,noselect,preview
   set shortmess+=c
+  set pumheight=10  " Limit popup menu height
   
-  " Simple completion mappings
+  " Enable automatic completion on text change (matching mucomplete delay)
+  set updatetime=100  " Faster response like mucomplete
+  
+  " Enhanced completion mappings
   inoremap <C-Space> <C-x><C-o>
   inoremap <C-n> <C-n>
   inoremap <C-p> <C-p>
+  
+  " Additional completion sources
+  inoremap <C-x><C-f> <C-x><C-f>  " File completion
+  inoremap <C-x><C-l> <C-x><C-l>  " Line completion
+  inoremap <C-x><C-k> <C-x><C-k>  " Dictionary completion
+  
+  " Auto-trigger completion after typing
+  augroup auto_complete
+    autocmd!
+    autocmd TextChangedI * call AutoTriggerCompletion()
+  augroup END
+  
+  " Function to auto-trigger completion (similar to mucomplete)
+  function! AutoTriggerCompletion()
+    let l:col = col('.') - 1
+    let l:line = getline('.')
+    
+    " Only trigger if we have typed at least 2 characters
+    if l:col > 2 && pumvisible() == 0
+      let l:char = l:line[l:col - 1]
+      let l:prev_char = l:line[l:col - 2]
+      
+      " Trigger after word characters or after dot (for method completion)
+      if (l:char =~# '\w' && l:prev_char =~# '\w') || l:char == '.'
+        " Try omni completion first, then keyword completion
+        call feedkeys("\<C-x>\<C-o>", 'n')
+      endif
+    endif
+  endfunction
+  
+  " Better completion behavior (matching .vimrc mucomplete style)
+  inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+  inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+  inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+  inoremap <expr> <Esc> pumvisible() ? "\<C-e>" : "\<Esc>"
+  
+  " Keep Tab for normal indentation (like mucomplete with no_mappings)
+  inoremap <Tab> <Tab>
+  inoremap <S-Tab> <S-Tab>
+  
+  " Go-specific completion enhancements
+  augroup go_completion
+    autocmd!
+    autocmd FileType go setlocal omnifunc=go#complete#Complete
+    autocmd FileType go inoremap <buffer> . .<C-x><C-o>
+  augroup END
   
   " Themery configuration (if available)
   lua << THEMERY_EOF
