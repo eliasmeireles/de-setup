@@ -95,6 +95,9 @@ if has('nvim')
   Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
 endif
 
+" CoC (Conquer of Completion) - Universal completion engine
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 " Alternative completion for classic Vim (only load if not Neovim)
 if !has('nvim')
   " Disable mucomplete default mappings before loading
@@ -114,8 +117,55 @@ Plug 'ryanoasis/vim-devicons'
 " Better syntax highlighting
 Plug 'sheerun/vim-polyglot'
 
-" Additional themes
+" Theme Manager (Neovim only)
+if has('nvim')
+  Plug 'zaldih/themery.nvim'
+endif
+
+" Material Design themes
+Plug 'kaicataldo/material.vim', { 'branch': 'main' }
+Plug 'hzchirs/vim-material'
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'ayu-theme/ayu-vim'
+
+" JetBrains-inspired themes
+Plug 'doums/darcula'
+Plug 'blueshirts/darcula'
+
+" Popular themes from vimcolorschemes collection
 Plug 'morhetz/gruvbox'
+Plug 'folke/tokyonight.nvim'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'EdenEast/nightfox.nvim'
+Plug 'rebelot/kanagawa.nvim'
+Plug 'Mofiqul/dracula.nvim'
+Plug 'navarasu/onedark.nvim'
+Plug 'ellisonleao/gruvbox.nvim'
+Plug 'rose-pine/neovim', { 'as': 'rose-pine' }
+Plug 'sainnhe/everforest'
+Plug 'sainnhe/sonokai'
+Plug 'projekt0n/github-nvim-theme'
+
+" Additional curated dark themes from vimcolorschemes
+Plug 'arcticicestudio/nord-vim'
+Plug 'joshdick/onedark.vim'
+Plug 'rakr/vim-one'
+Plug 'drewtempelmeyer/palenight.vim'
+Plug 'ayu-theme/ayu-vim'
+Plug 'chriskempson/base16-vim'
+Plug 'mhartington/oceanic-next'
+Plug 'jacoborus/tender.vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'lifepillar/vim-solarized8'
+Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/edge'
+Plug 'bluz71/vim-nightfly-colors', { 'as': 'nightfly' }
+Plug 'bluz71/vim-moonfly-colors', { 'as': 'moonfly' }
+Plug 'Rigellute/rigel'
+Plug 'cocopon/iceberg.vim'
+Plug 'w0ng/vim-hybrid'
+Plug 'nanotech/jellybeans.vim'
+Plug 'jnurmine/Zenburn'
 
 
 " html
@@ -287,24 +337,101 @@ if has('termguicolors')
   set termguicolors
 endif
 
-" Set colorscheme with fallback
-try
-  colorscheme gruvbox
-  " Optional: set gruvbox options
-  let g:gruvbox_contrast_dark = 'medium'
-  let g:gruvbox_improved_strings = 1
-  let g:gruvbox_improved_warnings = 1
-catch
-  try
-    colorscheme molokai
-  catch
-    colorscheme desert
-  endtry
-endtry
-
-" Background setting (uncomment one)
+" Set background first
 set background=dark
-" set background=light
+
+" Theme settings (must be set before colorscheme)
+" Sonokai settings (primary theme)
+let g:sonokai_style = 'default'  " Options: default, atlantis, andromeda, shusia, maia, espresso
+let g:sonokai_better_performance = 1
+let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 0
+let g:sonokai_diagnostic_text_highlight = 1
+let g:sonokai_diagnostic_line_highlight = 1
+let g:sonokai_diagnostic_virtual_text = 'colored'
+
+" Material settings (fallback)
+let g:material_terminal_italics = 1
+let g:material_theme_style = 'darker'
+
+" OneDark settings (fallback)
+let g:onedark_termcolors = 256
+let g:onedark_terminal_italics = 1
+
+" Enhanced syntax highlighting
+let g:vim_json_syntax_conceal = 0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
+" Better line numbers and cursor (like the first image)
+set number
+set nocursorcolumn  " Remove column highlighting for cleaner look
+set cursorline
+
+" Enhanced visual settings for better appearance
+set showmode
+set showcmd
+set laststatus=2
+set noshowmode  " Hide mode since airline shows it
+
+" Better colors and contrast
+if has('nvim') || has('termguicolors')
+  set termguicolors
+endif
+
+" Transparent background (optional - uncomment if you want transparency)
+" autocmd VimEnter * hi Normal guibg=NONE ctermbg=NONE
+" autocmd VimEnter * hi NonText guibg=NONE ctermbg=NONE
+
+" Set colorscheme with fallback (after plugins are loaded)
+autocmd VimEnter * call SetColorScheme()
+
+function! SetColorScheme()
+  try
+    " Try Sonokai first (beautiful high-contrast theme)
+    colorscheme sonokai
+    let g:airline_theme = 'sonokai'
+  catch
+    try
+      colorscheme gruvbox
+      let g:airline_theme = 'gruvbox'
+    catch
+      colorscheme desert
+      let g:airline_theme = 'dark'
+    endtry
+  endtry
+endfunction
+
+" Manual theme switching commands (try these to match first image)
+" :colorscheme onedark | let g:airline_theme = 'onedark' | AirlineRefresh
+" :colorscheme material | let g:airline_theme = 'material' | AirlineRefresh
+" :colorscheme tokyonight-storm | let g:airline_theme = 'tokyonight' | AirlineRefresh
+" :colorscheme nord | let g:airline_theme = 'nord' | AirlineRefresh
+" :colorscheme palenight | let g:airline_theme = 'palenight' | AirlineRefresh
+
+" Quick theme switching functions
+command! ThemeSonokai colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! ThemeOneDark colorscheme onedark | let g:airline_theme = 'onedark' | AirlineRefresh
+command! ThemeMaterial colorscheme material | let g:airline_theme = 'material' | AirlineRefresh
+command! ThemeTokyoNight colorscheme tokyonight-storm | let g:airline_theme = 'tokyonight' | AirlineRefresh
+command! ThemeNord colorscheme nord | let g:airline_theme = 'nord' | AirlineRefresh
+
+" Sonokai style variants (restart vim after changing)
+command! SonokaiDefault let g:sonokai_style = 'default' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiAtlantis let g:sonokai_style = 'atlantis' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiAndromeda let g:sonokai_style = 'andromeda' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiShusia let g:sonokai_style = 'shusia' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiMaia let g:sonokai_style = 'maia' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiEspresso let g:sonokai_style = 'espresso' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+
+
+" Gruvbox contrast options:
+" let g:gruvbox_contrast_dark = 'soft'      " Softer contrast
+" let g:gruvbox_contrast_dark = 'medium'    " Default (currently active)
+" let g:gruvbox_contrast_dark = 'hard'      " Higher contrast
+
+" Force theme reload function
+command! ReloadTheme call SetColorScheme()
 
 
 " Better command line completion
@@ -377,13 +504,27 @@ if exists("*fugitive#statusline")
   set statusline+=%{fugitive#statusline()}
 endif
 
-" vim-airline
-let g:airline_theme = 'powerlineish'
+" vim-airline configuration for better appearance
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#coc#enabled = 1
 let g:airline_skip_empty_sections = 1
+let g:airline_powerline_fonts = 1
+
+" Enhanced airline appearance
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+" Show encoding and file format
+let g:airline#parts#ffenc#skip_expected_string = ''
+let g:airline_section_y = '%{&fenc ? &fenc : &enc}[%{&ff}]'
+let g:airline_section_z = '%3p%% %l:%c'
 
 "*****************************************************************************
 "" Abbreviations
@@ -511,6 +652,16 @@ noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
+
+" Themery keybinding (Neovim only)
+if has('nvim')
+  nnoremap <leader>th :Themery<CR>
+else
+  " Manual theme switching for regular Vim
+  nnoremap <leader>th1 :colorscheme gruvbox<CR>:let g:airline_theme='gruvbox'<CR>:AirlineRefresh<CR>
+  nnoremap <leader>th2 :colorscheme material<CR>:let g:airline_theme='material'<CR>:AirlineRefresh<CR>
+  nnoremap <leader>th3 :colorscheme molokai<CR>:let g:airline_theme='molokai'<CR>:AirlineRefresh<CR>
+endif
 
 " The Silver Searcher
 if executable('ag')
@@ -811,6 +962,257 @@ null_ls.setup({
     },
 })
 EOLUA
+
+" Themery.nvim configuration (Neovim only)
+if has('nvim')
+lua << THEMERY_EOF
+require("themery").setup({
+  themes = {
+    -- === DARK THEMES (vimcolorschemes collection) ===
+    {
+      name = "🌙 Gruvbox Dark (Recommended)",
+      colorscheme = "gruvbox",
+      before = [[
+        vim.g.gruvbox_contrast_dark = 'hard'
+        vim.g.gruvbox_improved_strings = 1
+        vim.g.gruvbox_improved_warnings = 1
+        vim.g.gruvbox_italic = 1
+        vim.g.gruvbox_bold = 1
+        vim.g.gruvbox_underline = 1
+        vim.g.gruvbox_undercurl = 1
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Gruvbox Material Dark",
+      colorscheme = "gruvbox-material",
+      before = [[
+        vim.g.gruvbox_material_background = 'medium'
+        vim.g.gruvbox_material_better_performance = 1
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Tokyo Night Storm",
+      colorscheme = "tokyonight-storm"
+    },
+    {
+      name = "🌙 Tokyo Night Night",
+      colorscheme = "tokyonight-night"
+    },
+    {
+      name = "🌙 Catppuccin Mocha",
+      colorscheme = "catppuccin-mocha"
+    },
+    {
+      name = "🌙 Catppuccin Macchiato",
+      colorscheme = "catppuccin-macchiato"
+    },
+    {
+      name = "🌙 Nord",
+      colorscheme = "nord",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 OneDark",
+      colorscheme = "onedark",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 OneDark (joshdick)",
+      colorscheme = "onedark",
+      before = [[
+        vim.g.onedark_termcolors = 256
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Palenight",
+      colorscheme = "palenight",
+      before = [[
+        vim.g.palenight_terminal_italics = 1
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Ayu Dark",
+      colorscheme = "ayu",
+      before = [[
+        vim.g.ayucolor = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Ayu Mirage",
+      colorscheme = "ayu",
+      before = [[
+        vim.g.ayucolor = 'mirage'
+      ]]
+    },
+    {
+      name = "🌙 Oceanic Next",
+      colorscheme = "OceanicNext",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Tender",
+      colorscheme = "tender",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Challenger Deep",
+      colorscheme = "challenger_deep",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Solarized8 Dark",
+      colorscheme = "solarized8",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Edge Dark",
+      colorscheme = "edge",
+      before = [[
+        vim.g.edge_style = 'default'
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Nightfly",
+      colorscheme = "nightfly",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Moonfly",
+      colorscheme = "moonfly",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Rigel",
+      colorscheme = "rigel",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Iceberg",
+      colorscheme = "iceberg",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Hybrid",
+      colorscheme = "hybrid",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Jellybeans",
+      colorscheme = "jellybeans",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Zenburn",
+      colorscheme = "zenburn",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Nightfox",
+      colorscheme = "nightfox"
+    },
+    {
+      name = "🌙 Kanagawa Dragon",
+      colorscheme = "kanagawa-dragon"
+    },
+    {
+      name = "🌙 Kanagawa Wave",
+      colorscheme = "kanagawa-wave"
+    },
+    {
+      name = "🌙 Dracula",
+      colorscheme = "dracula"
+    },
+    {
+      name = "🌙 Rose Pine",
+      colorscheme = "rose-pine"
+    },
+    {
+      name = "🌙 Rose Pine Moon",
+      colorscheme = "rose-pine-moon"
+    },
+    {
+      name = "🌙 Everforest Dark",
+      colorscheme = "everforest",
+      before = [[
+        vim.g.everforest_background = 'medium'
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 Sonokai",
+      colorscheme = "sonokai"
+    },
+    {
+      name = "🌙 Material Ocean",
+      colorscheme = "material",
+      before = [[
+        vim.g.material_style = 'ocean'
+      ]]
+    },
+    {
+      name = "🌙 Material Darker",
+      colorscheme = "material",
+      before = [[
+        vim.g.material_style = 'darker'
+      ]]
+    },
+    {
+      name = "🌙 Material Palenight",
+      colorscheme = "material",
+      before = [[
+        vim.g.material_style = 'palenight'
+      ]]
+    },
+    {
+      name = "🌙 Base16 Default Dark",
+      colorscheme = "base16-default-dark",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    },
+    {
+      name = "🌙 One Dark",
+      colorscheme = "one",
+      before = [[
+        vim.opt.background = 'dark'
+      ]]
+    }
+  },
+  livePreview = true
+})
+THEMERY_EOF
+endif
 else
     " Enable mucomplete for classic Vim only
     if !has('nvim') && exists('g:loaded_mucomplete')
@@ -821,6 +1223,140 @@ else
         imap <expr> <C-k> mucomplete#extend_bwd("\<C-k>")
     endif
 endif
+
+"*****************************************************************************
+"" CoC (Conquer of Completion) Configuration
+"*****************************************************************************
+" CoC extensions to install automatically
+let g:coc_global_extensions = [
+  \ 'coc-json',
+  \ 'coc-tsserver',
+  \ 'coc-html',
+  \ 'coc-css',
+  \ 'coc-python',
+  \ 'coc-go',
+  \ 'coc-snippets',
+  \ 'coc-pairs',
+  \ 'coc-prettier',
+  \ 'coc-eslint'
+  \ ]
+
+" CoC configuration
+set hidden
+set nobackup
+set nowritebackup
+set cmdheight=2
+set updatetime=300
+set shortmess+=c
+
+" Always show the signcolumn
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
+" Use tab for trigger completion with characters ahead and navigate
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Applying codeAction to the selected region
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> for scroll float windows/popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Use CTRL-S for selections ranges
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " html
 " for html files, 2 spaces
