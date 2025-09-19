@@ -51,6 +51,7 @@ Plug 'editor-bootstrap/vim-bootstrap-updater'
 Plug 'tpope/vim-rhubarb' " required by fugitive to :GBrowse
 Plug 'tomasr/molokai'
 Plug 'morhetz/gruvbox'  " Additional theme
+Plug 'sainnhe/sonokai'  " Sonokai theme
 
 
 if isdirectory('/usr/local/opt/fzf')
@@ -81,30 +82,42 @@ Plug 'honza/vim-snippets'
 "" Go Lang Bundle
 Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 
-" LSP configuration (force compatible version)
-" Use a stable, older version that works with Neovim 0.10
-Plug 'neovim/nvim-lspconfig', { 'tag': 'v0.1.6' }
+" LSP configuration (disabled to prevent conflicts)
+" Plug 'neovim/nvim-lspconfig', { 'tag': 'v0.1.6' }
 
-" Autocompletion (only for Neovim 0.8+)
-if has('nvim-0.8')
-  Plug 'hrsh7th/nvim-cmp'           " Completion engine (Neovim)
-  Plug 'hrsh7th/cmp-nvim-lsp'      " LSP completion source
-  Plug 'hrsh7th/cmp-buffer'        " Buffer completion source
-  Plug 'hrsh7th/cmp-path'          " Path completion source
-  Plug 'hrsh7th/cmp-cmdline'       " Command line completion
-  Plug 'L3MON4D3/LuaSnip'          " Snippet engine
-  Plug 'saadparwaiz1/cmp_luasnip'  " Snippet completion source
+" Autocompletion (disabled due to compatibility issues)
+" Using built-in completion instead for stability
+" if has('nvim-0.8')
+"   Plug 'hrsh7th/nvim-cmp'
+"   Plug 'hrsh7th/cmp-nvim-lsp'
+"   Plug 'hrsh7th/cmp-buffer'
+"   Plug 'hrsh7th/cmp-path'
+"   Plug 'hrsh7th/cmp-cmdline'
+"   Plug 'L3MON4D3/LuaSnip'
+"   Plug 'saadparwaiz1/cmp_luasnip'
+" endif
+
+" Alternative completion for classic Vim (only load if not Neovim)
+if !has('nvim')
+  " Disable mucomplete default mappings before loading
+  let g:mucomplete#no_mappings = 1
+  Plug 'lifepillar/vim-mucomplete'  " Lightweight completion for Vim
 endif
 
-" Linting and diagnostics (use stable null-ls)
-Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
-Plug 'jose-elias-alvarez/null-ls.nvim'  " Original null-ls (more stable)
+" Linting and diagnostics (disabled to avoid conflicts)
+" Plug 'nvim-lua/plenary.nvim'      " Required for null-ls (Neovim)
+" Plug 'jose-elias-alvarez/null-ls.nvim'  " Original null-ls (more stable)
 
 " Icons (if you have nerd-fonts installed)
 Plug 'ryanoasis/vim-devicons'
 
 " Better syntax highlighting
 Plug 'sheerun/vim-polyglot'
+
+" Theme Manager (Neovim only)
+if has('nvim')
+  Plug 'zaldih/themery.nvim'
+endif
 
 
 " html
@@ -140,33 +153,13 @@ Plug 'HerringtonDarkholme/yats.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --bin' }
 Plug 'junegunn/fzf.vim'
 
+" Simple fzf configuration (no preview - lightweight and fast)
 let g:fzf_layout = { 'down': '~40%' }
-let g:fzf_preview_window = 'right:60%'
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit'
   \ }
-
-" Enhanced fzf configuration with preview (similar to your shell aliases)
-let g:fzf_preview_script = expand('~/.fzf/bin/fzf-preview.sh')
-
-" Configure preview options with file info display
-if filereadable(g:fzf_preview_script)
-  let g:fzf_files_options = '--preview "' . g:fzf_preview_script . ' {}" --bind "focus:transform-header:file --brief {}" --preview-window=right:60%'
-else
-  " Fallback preview options with file info
-  if executable('bat')
-    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
-  elseif executable('highlight')
-    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
-  else
-    let g:fzf_files_options = '--style full --preview "fzf-preview.sh {}" --bind "focus:transform-header:file --brief {}"'
-  endif
-endif
-
-" Set global fzf options for fzf.vim commands
-let $FZF_DEFAULT_OPTS = g:fzf_files_options
 
 
 
@@ -275,30 +268,64 @@ set number
 
 let no_buffers_menu=1
 
-" --- Enhanced Theme Configuration ---
+" --- Sonokai Theme Configuration ---
 " Enable true colors if supported
 if has('termguicolors')
   set termguicolors
 endif
 
-" Set colorscheme with fallback
-try
-  colorscheme gruvbox
-  " Optional: set gruvbox options
-  let g:gruvbox_contrast_dark = 'medium'
-  let g:gruvbox_improved_strings = 1
-  let g:gruvbox_improved_warnings = 1
-catch
-  try
-    colorscheme molokai
-  catch
-    colorscheme desert
-  endtry
-endtry
-
-" Background setting (uncomment one)
+" Set background first
 set background=dark
-" set background=light
+
+" Sonokai settings (primary theme)
+let g:sonokai_style = 'default'  " Options: default, atlantis, andromeda, shusia, maia, espresso
+let g:sonokai_better_performance = 1
+let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 0
+let g:sonokai_diagnostic_text_highlight = 1
+let g:sonokai_diagnostic_line_highlight = 1
+let g:sonokai_diagnostic_virtual_text = 'colored'
+
+" Gruvbox settings (fallback)
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_improved_strings = 1
+let g:gruvbox_improved_warnings = 1
+let g:gruvbox_italic = 1
+
+" Enhanced syntax highlighting
+let g:vim_json_syntax_conceal = 0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
+
+" Better line numbers and cursor (like the first image)
+set number
+set nocursorcolumn  " Remove column highlighting for cleaner look
+set cursorline
+
+" Enhanced visual settings for better appearance
+set showmode
+set showcmd
+set laststatus=2
+set noshowmode  " Hide mode since airline shows it
+
+" Set colorscheme with fallback (after plugins are loaded)
+autocmd VimEnter * call SetColorScheme()
+
+function! SetColorScheme()
+  try
+    " Try Sonokai first (beautiful high-contrast theme)
+    colorscheme sonokai
+    let g:airline_theme = 'sonokai'
+  catch
+    try
+      colorscheme gruvbox
+      let g:airline_theme = 'gruvbox'
+    catch
+      colorscheme desert
+      let g:airline_theme = 'dark'
+    endtry
+  endtry
+endfunction
 
 
 " Better command line completion
@@ -363,13 +390,26 @@ if exists("*fugitive#statusline")
   set statusline+=%{fugitive#statusline()}
 endif
 
-" vim-airline
-let g:airline_theme = 'powerlineish'
+" vim-airline configuration for better appearance
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 let g:airline_skip_empty_sections = 1
+let g:airline_powerline_fonts = 1
+
+" Enhanced airline appearance
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+" Show encoding and file format
+let g:airline#parts#ffenc#skip_expected_string = ''
+let g:airline_section_y = '%{&fenc ? &fenc : &enc}[%{&ff}]'
+let g:airline_section_z = '%3p%% %l:%c'
 
 "*****************************************************************************
 "" Abbreviations
@@ -513,10 +553,22 @@ endif
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
-" Enhanced file finder with preview (similar to your laff/vff aliases)
-nnoremap <silent> <leader>e :call fzf#run(fzf#wrap({'options': g:fzf_files_options . ' -m'}))<CR>
-" Alternative using fzf.vim Files command with preview
+" Simple file finder (no preview - following user's preference)
+nnoremap <silent> <leader>e :FZF -m<CR>
+" Alternative using fzf.vim Files command
 nnoremap <silent> <leader>ff :Files<CR>
+
+" Quick theme switching functions
+command! ThemeSonokai colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! ThemeGruvbox colorscheme gruvbox | let g:airline_theme = 'gruvbox' | AirlineRefresh
+
+" Sonokai style variants
+command! SonokaiDefault let g:sonokai_style = 'default' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiAtlantis let g:sonokai_style = 'atlantis' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiAndromeda let g:sonokai_style = 'andromeda' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiShusia let g:sonokai_style = 'shusia' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiMaia let g:sonokai_style = 'maia' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
+command! SonokaiEspresso let g:sonokai_style = 'espresso' | colorscheme sonokai | let g:airline_theme = 'sonokai' | AirlineRefresh
 "Recovery commands from history through FZF
 nmap <leader>y :History:<CR>
 
@@ -702,108 +754,82 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 " Disable ALE LSP integration to avoid conflicts
 let g:ale_disable_lsp = 1
 
-" --- LSP and Completion Configuration for Neovim ---
+" --- Simplified Configuration for Neovim ---
+" LSP and completion plugins disabled to avoid conflicts
+" Using ALE and built-in features instead
+
+" Built-in completion settings for Neovim
 if has('nvim')
-lua << EOLUA
--- LSP configuration (simplified and stable)
-local ok, lspconfig = pcall(require, 'lspconfig')
-if not ok then
-  return
-end
-lspconfig.gopls.setup{
-    cmd = {"gopls"},
-    filetypes = {"go", "gomod"},
-    root_dir = lspconfig.util.root_pattern("go.mod", ".git"),
-    settings = {
-        gopls = {
-            analyses = {
-                unusedparams = true,
-            },
-            staticcheck = true,
-            gofumpt = true,
+  " Enable built-in completion
+  set completeopt=menu,menuone,noselect
+  set shortmess+=c
+  
+  " Simple completion mappings
+  inoremap <C-Space> <C-x><C-o>
+  inoremap <C-n> <C-n>
+  inoremap <C-p> <C-p>
+  
+  " Themery configuration (if available)
+  lua << THEMERY_EOF
+  local ok, themery = pcall(require, 'themery')
+  if ok then
+    themery.setup({
+      themes = {
+        {
+          name = "🌙 Sonokai Default",
+          colorscheme = "sonokai",
+          before = [[
+            vim.g.sonokai_style = 'default'
+            vim.g.sonokai_better_performance = 1
+            vim.g.sonokai_enable_italic = 1
+            vim.opt.background = 'dark'
+          ]]
         },
-    },
-}
-
--- Autocompletion setup
-local cmp = require'cmp'
-local luasnip = require'luasnip'
-
-cmp.setup({
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert({
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-    }),
-    sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-    }, {
-        { name = 'buffer' },
-        { name = 'path' },
+        {
+          name = "🌙 Sonokai Andromeda",
+          colorscheme = "sonokai",
+          before = [[
+            vim.g.sonokai_style = 'andromeda'
+            vim.g.sonokai_better_performance = 1
+            vim.g.sonokai_enable_italic = 1
+            vim.opt.background = 'dark'
+          ]]
+        },
+        {
+          name = "🌙 Gruvbox Dark",
+          colorscheme = "gruvbox",
+          before = [[
+            vim.g.gruvbox_contrast_dark = 'medium'
+            vim.g.gruvbox_improved_strings = 1
+            vim.opt.background = 'dark'
+          ]]
+        }
+      },
+      livePreview = true
     })
-})
-
--- Command line completion
-cmp.setup.cmdline('/', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-        { name = 'buffer' }
-    }
-})
-
-cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-        { name = 'path' }
-    }, {
-        { name = 'cmdline' }
-    })
-})
-
--- null-ls for additional linting and formatting
-local ok_null, null_ls = pcall(require, "null-ls")
-if not ok_null then
-  return
-end
-null_ls.setup({
-    sources = {
-        -- Go linters and formatters
-        null_ls.builtins.formatting.goimports,
-        null_ls.builtins.formatting.gofmt,
-        null_ls.builtins.diagnostics.golangci_lint,
-        null_ls.builtins.diagnostics.staticcheck,
-        null_ls.builtins.code_actions.gomodifytags,
-        null_ls.builtins.code_actions.impl,
-    },
-})
-EOLUA
+  end
+THEMERY_EOF
+  
+  " Themery keybinding
+  nnoremap <leader>th :Themery<CR>
+else
+  " Enable mucomplete for classic Vim only
+  if exists('g:loaded_mucomplete')
+    let g:mucomplete#enable_auto_at_startup = 1
+    let g:mucomplete#completion_delay = 1
+    " Use custom mappings
+    imap <expr> <C-j> mucomplete#extend_fwd("\<C-j>")
+    imap <expr> <C-k> mucomplete#extend_bwd("\<C-k>")
+  endif
 endif
+
+" Completion preview close (for both Vim and Neovim)
+augroup completion_preview_close
+  autocmd!
+  if v:version > 703 || v:version == 703 && has('patch598')
+    autocmd CompleteDone * if !&previewwindow && &completeopt =~ 'preview' | silent! pclose | endif
+  endif
+augroup END
 
 
 " html
