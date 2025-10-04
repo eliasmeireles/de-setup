@@ -21,25 +21,25 @@ The cleanup process:
 
 ### Direct execution with defaults (2:00 AM daily, 7 days log retention)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/install-k3s-cleanup.sh | sudo bash
 ```
 
 ### Direct execution with custom options
 ```bash
 # Download and run with custom schedule (e.g., every 6 hours)
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *'
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *'
 
 # With custom log retention (16 days)
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -lk 16
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/install-k3s-cleanup.sh | sudo bash -s -- -lk 16
 
 # With custom schedule and log retention
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *' -lk 16
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *' -lk 16
 ```
 
 ### Manual installation
 ```bash
 # Download the script
-wget https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh
+wget https://eliasmeireles.com.br/tools/k8s/install-k3s-cleanup.sh
 
 # Make it executable
 chmod +x install-k3s-cleanup.sh
@@ -68,11 +68,11 @@ sudo ./install-k3s-cleanup.sh -h
 
 ## 🛠️ Command-Line Options
 
-| Flag | Long Form | Description | Default |
-|------|-----------|-------------|----------|
-| `-s` | `--schedule` | Cron schedule expression | `0 2 * * *` (2:00 AM daily) |
-| `-lk` | `--log-keep` | Days to keep logs | `7` |
-| `-h` | `--help` | Show help message | - |
+| Flag  | Long Form    | Description              | Default                     |
+| ----- | ------------ | ------------------------ | --------------------------- |
+| `-s`  | `--schedule` | Cron schedule expression | `0 2 * * *` (2:00 AM daily) |
+| `-lk` | `--log-keep` | Days to keep logs        | `7`                         |
+| `-h`  | `--help`     | Show help message        | -                           |
 
 ## 🔧 Usage
 
