@@ -8,6 +8,7 @@ The installation script sets up:
 - A cleanup script at `/usr/local/bin/k3s-cleanup.sh`
 - A configurable cron job (default: daily at 2:00 AM)
 - Logging to `/var/log/k3s-cleanup.log`
+- Logrotate configuration to manage log retention (default: 7 days)
 - Uses full path `/usr/local/bin/k3s` for cron compatibility
 
 The cleanup process:
@@ -18,15 +19,21 @@ The cleanup process:
 
 ## 🚀 Quick Installation
 
-### Direct execution with default schedule (2:00 AM daily)
+### Direct execution with defaults (2:00 AM daily, 7 days log retention)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash
 ```
 
-### Direct execution with custom schedule
+### Direct execution with custom options
 ```bash
 # Download and run with custom schedule (e.g., every 6 hours)
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- '0 */6 * * *'
+curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *'
+
+# With custom log retention (16 days)
+curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -lk 16
+
+# With custom schedule and log retention
+curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- -s '0 */6 * * *' -lk 16
 ```
 
 ### Manual installation
@@ -37,11 +44,20 @@ wget https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8
 # Make it executable
 chmod +x install-k3s-cleanup.sh
 
-# Run with sudo (default schedule)
+# Run with defaults (2:00 AM daily, 7 days retention)
 sudo ./install-k3s-cleanup.sh
 
-# Or with custom schedule
-sudo ./install-k3s-cleanup.sh '0 */6 * * *'
+# With custom schedule
+sudo ./install-k3s-cleanup.sh -s '0 */6 * * *'
+
+# With custom log retention
+sudo ./install-k3s-cleanup.sh -lk 16
+
+# With custom schedule and log retention
+sudo ./install-k3s-cleanup.sh -s '0 */6 * * *' -lk 16
+
+# Show help
+sudo ./install-k3s-cleanup.sh -h
 ```
 
 ## 📋 Requirements
@@ -49,6 +65,14 @@ sudo ./install-k3s-cleanup.sh '0 */6 * * *'
 - **Root privileges**: The script must be run as root or with `sudo`
 - **K3s installed**: The script requires K3s to be installed at `/usr/local/bin/k3s`
 - **cron service**: For automated scheduling (usually pre-installed on most systems)
+
+## 🛠️ Command-Line Options
+
+| Flag | Long Form | Description | Default |
+|------|-----------|-------------|----------|
+| `-s` | `--schedule` | Cron schedule expression | `0 2 * * *` (2:00 AM daily) |
+| `-lk` | `--log-keep` | Days to keep logs | `7` |
+| `-h` | `--help` | Show help message | - |
 
 ## 🔧 Usage
 
@@ -106,28 +130,52 @@ sudo cat /var/log/k3s-cleanup.log
 
 # Follow logs in real-time
 sudo tail -f /var/log/k3s-cleanup.log
+
+# View rotated logs (compressed)
+sudo zcat /var/log/k3s-cleanup.log.1.gz
+
+# Check logrotate configuration
+cat /etc/logrotate.d/k3s-cleanup
 ```
 
 ## ⚙️ Configuration
 
-### Modify Cron Schedule
+### Modify Cron Schedule and Log Retention
 
-You can change the schedule by running the installation script again with a different cron schedule:
+You can change the schedule and log retention by running the installation script again:
 
 ```bash
-# Run the installation script with a new schedule
-sudo ./install-k3s-cleanup.sh '0 */6 * * *'
+# Change schedule only
+sudo ./install-k3s-cleanup.sh -s '0 */6 * * *'
+
+# Change log retention only
+sudo ./install-k3s-cleanup.sh -lk 30
+
+# Change both schedule and log retention
+sudo ./install-k3s-cleanup.sh -s '0 */6 * * *' -lk 16
 
 # The script will:
 # 1. Remove the existing crontab entry
 # 2. Create a new entry with the updated schedule
+# 3. Update logrotate configuration
+```
 
-# Schedule examples:
-# '0 2 * * *'      # Daily at 2:00 AM (default)
-# '0 */6 * * *'    # Every 6 hours
-# '30 3 * * *'     # Daily at 3:30 AM
-# '0 1 * * 0'      # Weekly on Sunday at 1:00 AM
-# '0 3 1 * *'      # Monthly on 1st day at 3:00 AM
+### Schedule Examples
+
+```bash
+sudo ./install-k3s-cleanup.sh -s '0 2 * * *'      # Daily at 2:00 AM (default)
+sudo ./install-k3s-cleanup.sh -s '0 */6 * * *'    # Every 6 hours
+sudo ./install-k3s-cleanup.sh -s '30 3 * * *'     # Daily at 3:30 AM
+sudo ./install-k3s-cleanup.sh -s '0 1 * * 0'      # Weekly on Sunday at 1:00 AM
+sudo ./install-k3s-cleanup.sh -s '0 3 1 * *'      # Monthly on 1st day at 3:00 AM
+```
+
+### Log Retention Examples
+
+```bash
+sudo ./install-k3s-cleanup.sh -lk 7     # Keep logs for 7 days (default)
+sudo ./install-k3s-cleanup.sh -lk 16    # Keep logs for 16 days
+sudo ./install-k3s-cleanup.sh -lk 30    # Keep logs for 30 days
 ```
 
 ### Manual Crontab Edit
@@ -183,6 +231,18 @@ sudo systemctl start cron
 sudo systemctl enable cron
 ```
 
+**Logs not rotating**
+```bash
+# Check logrotate configuration
+cat /etc/logrotate.d/k3s-cleanup
+
+# Test logrotate manually
+sudo logrotate -d /etc/logrotate.d/k3s-cleanup
+
+# Force logrotate
+sudo logrotate -f /etc/logrotate.d/k3s-cleanup
+```
+
 ### Verification
 
 ```bash
@@ -208,8 +268,11 @@ sudo rm /usr/local/bin/k3s-cleanup.sh
 sudo crontab -e
 # Delete lines containing k3s-cleanup
 
-# Remove log file (optional)
-sudo rm /var/log/k3s-cleanup.log
+# Remove logrotate configuration
+sudo rm /etc/logrotate.d/k3s-cleanup
+
+# Remove log files (optional)
+sudo rm /var/log/k3s-cleanup.log*
 ```
 
 ## 📝 Notes
@@ -219,7 +282,10 @@ sudo rm /var/log/k3s-cleanup.log
 - The script includes error handling and will exit safely if K3s is not available
 - Disk usage is shown before and after cleanup to track space savings
 - Uses full path `/usr/local/bin/k3s` to ensure cron jobs work correctly
-- Re-running the installation script will replace the existing crontab entry with the new schedule
+- Re-running the installation script will replace the existing crontab entry with the new configuration
+- Logrotate automatically manages log files, compressing old logs and removing them after the retention period
+- All options support both short (`-s`, `-lk`) and long (`--schedule`, `--log-keep`) forms
+- Use `-h` or `--help` to see all available options
 
 ## 🤝 Contributing
 
