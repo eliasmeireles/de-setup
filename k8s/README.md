@@ -1,6 +1,6 @@
 # K3s Cleanup Installation Script
 
-This directory contains a script to install and configure an automated K3s cleanup system that helps maintain your K3s cluster by removing stopped containers and unused images.
+This script installs and configures an automated K3s cleanup system that helps maintain your K3s cluster by removing stopped containers and unused images.
 
 ## 📋 What it does
 
