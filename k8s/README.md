@@ -6,8 +6,9 @@ This directory contains a script to install and configure an automated K3s clean
 
 The installation script sets up:
 - A cleanup script at `/usr/local/bin/k3s-cleanup.sh`
-- A daily cron job that runs at 2:00 AM
+- A configurable cron job (default: daily at 2:00 AM)
 - Logging to `/var/log/k3s-cleanup.log`
+- Uses full path `/usr/local/bin/k3s` for cron compatibility
 
 The cleanup process:
 - ✅ Removes stopped containers (Created/Exited state)
@@ -17,9 +18,15 @@ The cleanup process:
 
 ## 🚀 Quick Installation
 
-### Direct execution (recommended)
+### Direct execution with default schedule (2:00 AM daily)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash
+```
+
+### Direct execution with custom schedule
+```bash
+# Download and run with custom schedule (e.g., every 6 hours)
+curl -fsSL https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8s/install-k3s-cleanup.sh | sudo bash -s -- '0 */6 * * *'
 ```
 
 ### Manual installation
@@ -30,14 +37,17 @@ wget https://raw.githubusercontent.com/eliasmeireles/de-setup/refs/heads/main/k8
 # Make it executable
 chmod +x install-k3s-cleanup.sh
 
-# Run with sudo
+# Run with sudo (default schedule)
 sudo ./install-k3s-cleanup.sh
+
+# Or with custom schedule
+sudo ./install-k3s-cleanup.sh '0 */6 * * *'
 ```
 
 ## 📋 Requirements
 
 - **Root privileges**: The script must be run as root or with `sudo`
-- **K3s installed**: The script requires K3s to be installed and available in PATH
+- **K3s installed**: The script requires K3s to be installed at `/usr/local/bin/k3s`
 - **cron service**: For automated scheduling (usually pre-installed on most systems)
 
 ## 🔧 Usage
@@ -102,17 +112,33 @@ sudo tail -f /var/log/k3s-cleanup.log
 
 ### Modify Cron Schedule
 
-To change when the cleanup runs:
+You can change the schedule by running the installation script again with a different cron schedule:
+
+```bash
+# Run the installation script with a new schedule
+sudo ./install-k3s-cleanup.sh '0 */6 * * *'
+
+# The script will:
+# 1. Remove the existing crontab entry
+# 2. Create a new entry with the updated schedule
+
+# Schedule examples:
+# '0 2 * * *'      # Daily at 2:00 AM (default)
+# '0 */6 * * *'    # Every 6 hours
+# '30 3 * * *'     # Daily at 3:30 AM
+# '0 1 * * 0'      # Weekly on Sunday at 1:00 AM
+# '0 3 1 * *'      # Monthly on 1st day at 3:00 AM
+```
+
+### Manual Crontab Edit
+
+Alternatively, you can edit the crontab directly:
 
 ```bash
 # Edit crontab
 sudo crontab -e
 
-# Current schedule: 0 2 * * * (daily at 2:00 AM)
-# Examples:
-# 0 */6 * * *    # Every 6 hours
-# 0 1 * * 0      # Weekly on Sunday at 1:00 AM
-# 0 3 1 * *      # Monthly on 1st day at 3:00 AM
+# Modify the schedule in the k3s-cleanup entry
 ```
 
 ### Disable Automatic Cleanup
@@ -129,12 +155,13 @@ sudo crontab -e
 
 **Script fails with "k3s command not found"**
 ```bash
-# Check if k3s is installed
-which k3s
+# Check if k3s is installed at the expected location
+ls -la /usr/local/bin/k3s
 
-# If not in PATH, add to your profile
-echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
-source ~/.bashrc
+# If k3s is elsewhere, create a symlink
+sudo ln -s $(which k3s) /usr/local/bin/k3s
+
+# The script uses full path /usr/local/bin/k3s for cron compatibility
 ```
 
 **Permission denied errors**
@@ -191,6 +218,8 @@ sudo rm /var/log/k3s-cleanup.log
 - All operations are logged with timestamps for audit purposes
 - The script includes error handling and will exit safely if K3s is not available
 - Disk usage is shown before and after cleanup to track space savings
+- Uses full path `/usr/local/bin/k3s` to ensure cron jobs work correctly
+- Re-running the installation script will replace the existing crontab entry with the new schedule
 
 ## 🤝 Contributing
 
