@@ -17,24 +17,24 @@ chmod +x k3s-local-install.sh
 ./k3s-local-install.sh [options]
 ```
 
-### **Option 2 — Run directly with `curl | sudo bash`**
+### **Option 2 — Run directly with `curl | bash`**
 
 You can execute the install directly without saving it locally:
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash
 ```
 
 You can also **pass arguments** directly to the script, for example:
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --name my-cluster --path /opt/k3s
 ```
 
 Or to remove everything (cleanup):
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --cleanup
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --cleanup
 ```
 
 ---
@@ -69,7 +69,7 @@ The script supports multiple options for flexibility:
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash
 ```
 
 ---
@@ -83,7 +83,7 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo ba
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --name my-cluster --path /opt/k3s
 ```
 
 ---
@@ -97,7 +97,7 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo ba
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --cleanup
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --cleanup
 ```
 
 This will:
