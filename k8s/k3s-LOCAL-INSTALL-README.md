@@ -28,7 +28,7 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash
 You can also **pass arguments** directly to the script, for example:
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --name my-cluster --path /opt/k3s
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | bash -s -- --name my-cluster --path /opt/k3s --cip 192.168.1.100
 ```
 
 Or to remove everything (cleanup):
@@ -53,7 +53,7 @@ The script supports multiple options for flexibility:
 | ----------- | --------------------------------------------------------------- | ----------- |
 | `--name`    | Sets the cluster name.                                          | `k8s-local` |
 | `--path`    | Sets the data directory path where cluster data will be stored. | `/mnt/data` |
-| `--ip`      | Sets the cluster IP.                                            | `127.0.0.1` |
+| `--cip`     | Sets the cluster IP.                                            | `127.0.0.1` |
 | `--cleanup` | Removes K3s and deletes the data directory.                     | *Optional*  |
 | `--help`    | Displays help and usage information.                            | —           |
 
