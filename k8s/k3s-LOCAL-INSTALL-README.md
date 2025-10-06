@@ -53,6 +53,7 @@ The script supports multiple options for flexibility:
 | ----------- | --------------------------------------------------------------- | ----------- |
 | `--name`    | Sets the cluster name.                                          | `k8s-local` |
 | `--path`    | Sets the data directory path where cluster data will be stored. | `/mnt/data` |
+| `--ip`      | Sets the cluster IP.                                            | `127.0.0.1` |
 | `--cleanup` | Removes K3s and deletes the data directory.                     | *Optional*  |
 | `--help`    | Displays help and usage information.                            | —           |
 
