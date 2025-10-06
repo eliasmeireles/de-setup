@@ -1,6 +1,6 @@
-# 🧩 K3s Local Installer
+# 🧩 K3s Local install
 
-A simple and automated **K3s Kubernetes** local installer for Linux systems (tested with Ubuntu).
+A simple and automated **K3s Kubernetes** local install for Linux systems (tested with Ubuntu).
 This script allows you to **quickly set up**, **manage**, and **optionally clean up** a local K3s cluster.
 
 ---
@@ -12,29 +12,29 @@ You can run the script in **two ways** — either by downloading it manually or 
 ### **Option 1 — Manual download and run**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh -o k3s-local-installer.sh
-chmod +x k3s-local-installer.sh
-./k3s-local-installer.sh [options]
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh -o k3s-local-install.sh
+chmod +x k3s-local-install.sh
+./k3s-local-install.sh [options]
 ```
 
 ### **Option 2 — Run directly with `curl | sudo bash`**
 
-You can execute the installer directly without saving it locally:
+You can execute the install directly without saving it locally:
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash
 ```
 
 You can also **pass arguments** directly to the script, for example:
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
 ```
 
 Or to remove everything (cleanup):
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash -s -- --cleanup
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --cleanup
 ```
 
 ---
@@ -44,7 +44,7 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo 
 The script supports multiple options for flexibility:
 
 ```bash
-./k3s-local-installer.sh [--name <cluster-name>] [--path <data-path>] [--cleanup] [--help]
+./k3s-local-install.sh [--name <cluster-name>] [--path <data-path>] [--cleanup] [--help]
 ```
 
 ### Available Options
@@ -63,13 +63,13 @@ The script supports multiple options for flexibility:
 ### 1. Install with default settings
 
 ```bash
-./k3s-local-installer.sh
+./k3s-local-install.sh
 ```
 
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash
 ```
 
 ---
@@ -77,13 +77,13 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo 
 ### 2. Install with custom name and path
 
 ```bash
-./k3s-local-installer.sh --name my-cluster --path /opt/k3s
+./k3s-local-install.sh --name my-cluster --path /opt/k3s
 ```
 
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --name my-cluster --path /opt/k3s
 ```
 
 ---
@@ -91,13 +91,13 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo 
 ### 3. Clean up the environment
 
 ```bash
-./k3s-local-installer.sh --cleanup
+./k3s-local-install.sh --cleanup
 ```
 
 **or**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-installer.sh | sudo bash -s -- --cleanup
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-local-install.sh | sudo bash -s -- --cleanup
 ```
 
 This will:
