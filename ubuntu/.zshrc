@@ -25,6 +25,17 @@ export PATH="$PATH:$FLUTTER_PATH/.pub-cache/bin"
 
 alias chrome="setsid google-chrome &>/dev/null"
 
+# Jwt
+# TOKEN="...copie o Bearer aqui..."
+# echo "$TOKEN" | cut -d '.' -f 2 | base64 -d 2>/dev/null | jq .
+# Validate before call jq, if the value does not ends with }, then add it
+alias jwt='f(){echo "$1" | cut -d "." -f 2 | base64 -d 2>/dev/null | jq .}; f'
+alias jwtraw='f(){echo "$1" | cut -d "." -f 2 | base64 -d}; f'
+
+# Git
+
+alias gfp="git fetch --all && git pull"
+
 # Ip check
 alias ipCheck="ip a | grep -oP 'inet\s+\K(?!127\.0\.0\.1)[\d.]+'"
 
