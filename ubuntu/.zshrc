@@ -29,7 +29,7 @@ alias chrome="setsid google-chrome &>/dev/null"
 # TOKEN="...copie o Bearer aqui..."
 # echo "$TOKEN" | cut -d '.' -f 2 | base64 -d 2>/dev/null | jq .
 # Validate before call jq, if the value does not ends with }, then add it
-alias jwt='f(){echo "$1" | cut -d "." -f 2 | base64 -d 2>/dev/null | jq .}; f'
+alias jwt='f(){decoded="$(echo "$1" | cut -d "." -f 2 | base64 -d 2>/dev/null | jq .)"; if [[ "$decoded" != *"}" ]]; then echo "$decoded"; fi}; f'
 alias jwtraw='f(){echo "$1" | cut -d "." -f 2 | base64 -d}; f'
 
 # Git
