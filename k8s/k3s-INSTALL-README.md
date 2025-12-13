@@ -10,15 +10,15 @@ This script automatically detects your network environment (VPN, Public IP, FQDN
 ### **Option 1 — Manual download and run**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-installer.sh -o k3s-installer.sh
-chmod +x k3s-installer.sh
-./k3s-installer.sh [options]
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-install.sh -o k3s-install.sh
+chmod +x k3s-install.sh
+./k3s-install.sh [options]
 ```
 
 ### **Option 2 — Run directly with `curl | bash`**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-installer.sh | bash -s -- --cn my-cluster
+curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-install.sh | bash -s -- --cn my-cluster
 ```
 
 ---
@@ -28,7 +28,7 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-installer.sh | bash -s -- 
 The script supports multiple options for customization, though it tries to auto-detect most settings:
 
 ```bash
-./k3s-installer.sh [--cn <name>] [--cip <ip>] [--vpn-if <iface>] [--pubip <ip>] [--cleanup] [--continue]
+./k3s-install.sh [--cn <name>] [--cip <ip>] [--vpn-if <iface>] [--pubip <ip>] [--cleanup] [--continue]
 ```
 
 ### Available Options
@@ -51,25 +51,25 @@ The script supports multiple options for customization, though it tries to auto-
 ### 1. Smart Install (Auto-detect everything)
 
 ```bash
-./k3s-installer.sh
+./k3s-install.sh
 ```
 
 ### 2. Custom Cluster Name and Explicit VPN Interface
 
 ```bash
-./k3s-installer.sh --cn dev-cluster --vpn-if wg0
+./k3s-install.sh --cn dev-cluster --vpn-if wg0
 ```
 
 ### 3. Cleanup Existing Installation
 
 ```bash
-./k3s-installer.sh --cleanup
+./k3s-install.sh --cleanup
 ```
 
 ### 4. Cleanup and Reinstall (Fresh Start)
 
 ```bash
-./k3s-installer.sh --cleanup --continue
+./k3s-install.sh --cleanup --continue
 ```
 
 ---
