@@ -93,6 +93,7 @@ data-dir: ${K3S_DATA_DIR}
 write-kubeconfig-mode: "0644"
 bind-address: ${CLUSTER_IP}
 advertise-address: ${CLUSTER_IP}
+flannel-iface: ${VPN_IFACE}
 tls-san:
   - ${FQDN}
   - ${CLUSTER_IP}
@@ -115,6 +116,7 @@ INSTALL_OPTS+=" --tls-san 127.0.0.1"
 INSTALL_OPTS+=" --write-kubeconfig-mode 0644"
 INSTALL_OPTS+=" --bind-address ${CLUSTER_IP}"
 INSTALL_OPTS+=" --advertise-address ${CLUSTER_IP}"
+INSTALL_OPTS+=" --flannel-iface ${VPN_IFACE}"
 
 curl -sfL https://get.k3s.io | \
   INSTALL_K3S_EXEC="${INSTALL_OPTS}" \
