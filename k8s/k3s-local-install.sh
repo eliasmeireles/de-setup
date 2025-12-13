@@ -13,6 +13,10 @@ K3S_CONFIG_FILE="/etc/rancher/k3s/config.yaml"
 K3S_KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 USER_KUBECONFIG="${HOME}/.kube/config"
 
+# Optional IPs
+VPN_IP=""
+PUBLIC_IP=""
+
 # ================================
 # 📖 HELP FUNCTION
 # ================================
@@ -22,12 +26,15 @@ show_help() {
   echo "Options:"
   echo "  --cn <name>        Cluster name (default: k8s-local)"
   echo "  --cip <ip>         Cluster IP address (default: 127.0.0.1)"
+  echo "  --vpn-ip <ip>      VPN IP address (Restricts API access to this IP)"
+  echo "  --public-ip <ip>   Public IP address (For Ingress/ServiceLB advertising)"
   echo "  --path <path>      Base data path (default: /mnt/data)"
   echo "  --cleanup          Uninstall K3s and remove data directory"
   echo "  --help             Show this help message"
   echo
   echo "Examples:"
   echo "  $0 --cn dev-cluster --cip 192.168.1.10"
+  echo "  $0 --vpn-ip 10.8.0.5 --public-ip 203.0.113.10"
   echo "  $0 --cleanup"
   exit 0
 }
@@ -44,6 +51,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --cip)
       CLUSTER_IP="$2"
+      shift 2
+      ;;
+    --vpn-ip)
+      VPN_IP="$2"
+      shift 2
+      ;;
+    --public-ip)
+      PUBLIC_IP="$2"
       shift 2
       ;;
     --path)
@@ -90,7 +105,7 @@ fi
 # ================================
 # 🔍 PREREQUISITES
 # ================================
-for cmd in kubectl curl base64; do
+for cmd in curl base64; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     echo "[ERROR] Command '$cmd' not found. Please install it before running this script."
     exit 1
@@ -117,7 +132,9 @@ sudo chmod -R 777 "${DATA_PATH}/k8s-resources/" || true
 # ================================
 echo "[INFO] Creating K3s configuration file..."
 sudo mkdir -p "$(dirname "$K3S_CONFIG_FILE")"
-sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
+
+# Build K3s config content
+cat <<EOF | sudo tee "$K3S_CONFIG_FILE" >/dev/null
 cluster-name: ${CLUSTER_NAME}
 data-dir: ${K3S_DATA_DIR}
 write-kubeconfig-mode: "0644"
@@ -127,9 +144,32 @@ EOF
 # 🚀 INSTALL K3S
 # ================================
 echo "[INFO] Installing K3s..."
+
+# Construct INSTALL_K3S_EXEC arguments
+EXEC_ARGS=""
+
+# Add default tls-san
+EXEC_ARGS+=" --tls-san ${CLUSTER_IP}"
+
+if [[ -n "$VPN_IP" ]]; then
+  echo "[CONFIG] Restricting API server to VPN IP: $VPN_IP"
+  EXEC_ARGS+=" --bind-address ${VPN_IP}"
+  EXEC_ARGS+=" --node-ip ${VPN_IP}"
+  EXEC_ARGS+=" --tls-san ${VPN_IP}"
+fi
+
+if [[ -n "$PUBLIC_IP" ]]; then
+  echo "[CONFIG] Setting Node External IP: $PUBLIC_IP"
+  EXEC_ARGS+=" --node-external-ip ${PUBLIC_IP}"
+  EXEC_ARGS+=" --tls-san ${PUBLIC_IP}"
+fi
+
+# Debug: Show the configured arguments
+echo "[DEBUG] K3s Exec Args: $EXEC_ARGS"
+
 curl -sfL https://get.k3s.io | \
   K3S_DATA_DIR="$K3S_DATA_DIR" \
-  INSTALL_K3S_EXEC="--tls-san ${CLUSTER_IP}" \
+  INSTALL_K3S_EXEC="${EXEC_ARGS}" \
   sh -
 
 # ================================
