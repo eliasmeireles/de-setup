@@ -16,9 +16,7 @@ PUBLIC_IP=""
 FQDN=""
 CLEANUP=false
 CONTINUE=false
-currentHostname="$(hostname)"
 
-echo "Current hostname $currentHostname"
 # ===============================================
 # 🧠 Parse Args
 # ===============================================
@@ -60,16 +58,11 @@ echo "[INFO] Detecting network..."
 
 # Try VPN iface + IP
 if [[ -z "$VPN_IFACE" || -z "$CLUSTER_IP" ]]; then
-  for i in {1..20}; do
-    VPN_IFACE=$(ip -o link show | awk -F': ' '{print $2}' | grep -E 'wt|wg|netbird|vpn' || true)
-    [[ -n "$VPN_IFACE" ]] && CLUSTER_IP=$(ip -4 -o addr show "$VPN_IFACE" | awk '{print $4}' | cut -d/ -f1)
-    if [[ -n "$CLUSTER_IP" ]]; then
-      echo "[INFO] Found VPN interface: $VPN_IFACE ($CLUSTER_IP)"
-      break
-    fi
-    echo "[WAIT] Waiting for VPN interface... ($i/20)"
-    sleep 2
-  done
+  VPN_IFACE=$(ip -o link show | awk -F': ' '{print $2}' | grep -E 'wt|wg|netbird|vpn' | head -n1 || true)
+  if [[ -n "$VPN_IFACE" ]]; then
+    CLUSTER_IP=$(ip -4 -o addr show "$VPN_IFACE" | awk '{print $4}' | cut -d/ -f1)
+    echo "[INFO] Found VPN interface: $VPN_IFACE ($CLUSTER_IP)"
+  fi
 fi
 
 [[ -z "$CLUSTER_IP" ]] && CLUSTER_IP=$(hostname -I | awk '{print $1}')
@@ -94,27 +87,19 @@ echo "[INFO] FQDN       : $FQDN"
 # ===============================================
 sudo mkdir -p "$(dirname "$K3S_CONFIG_FILE")"
 
-if [[ -n "$FQDN" ]]; then
-    sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
+sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
 cluster-name: ${CLUSTER_NAME}
 data-dir: ${K3S_DATA_DIR}
 write-kubeconfig-mode: "0644"
+bind-address: ${CLUSTER_IP}
+advertise-address: ${CLUSTER_IP}
 tls-san:
+  - ${FQDN}
   - ${CLUSTER_IP}
   - ${PUBLIC_IP:-${CLUSTER_IP}}
   - 127.0.0.1
 EOF
-else
-    sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
-cluster-name: ${CLUSTER_NAME}
-data-dir: ${K3S_DATA_DIR}
-write-kubeconfig-mode: "0644"
-tls-san:
-  - ${CLUSTER_IP}
-  - ${PUBLIC_IP:-${CLUSTER_IP}}
-  - 127.0.0.1
-EOF
-fi
+
 
 # ===============================================
 # 🚀 Install K3s
@@ -128,6 +113,8 @@ INSTALL_OPTS+=" --tls-san ${CLUSTER_IP}"
 INSTALL_OPTS+=" --tls-san ${PUBLIC_IP:-${CLUSTER_IP}}"
 INSTALL_OPTS+=" --tls-san 127.0.0.1"
 INSTALL_OPTS+=" --write-kubeconfig-mode 0644"
+INSTALL_OPTS+=" --bind-address ${CLUSTER_IP}"
+INSTALL_OPTS+=" --advertise-address ${CLUSTER_IP}"
 
 curl -sfL https://get.k3s.io | \
   INSTALL_K3S_EXEC="${INSTALL_OPTS}" \
@@ -151,6 +138,7 @@ done
 # 🧾 Update Kubeconfig
 # ===============================================
 sudo sed -i "s|https://.*:6443|https://${FQDN}:6443|g" "$K3S_KUBECONFIG"
+sudo sed -i "s|default|${CLUSTER_NAME}|g" "$K3S_KUBECONFIG"
 mkdir -p "$(dirname "$USER_KUBECONFIG")"
 sudo cp "$K3S_KUBECONFIG" "$USER_KUBECONFIG"
 sudo chown $(id -u):$(id -g) "$USER_KUBECONFIG"
@@ -181,3 +169,6 @@ echo "kubectl get nodes -o wide"
 echo "--------------------------------------------"
 echo "To check the cluster, run:"
 echo "openssl s_client -connect ${FQDN}:6443 2>/dev/null | openssl x509 -noout -text | grep DNS:"
+echo "--------------------------------------------"
+echo "To get kubectl config, run:"
+echo "cat ${USER_KUBECONFIG}"
