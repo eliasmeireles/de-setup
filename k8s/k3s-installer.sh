@@ -99,38 +99,22 @@ if [[ -n "$FQDN" ]]; then
 cluster-name: ${CLUSTER_NAME}
 data-dir: ${K3S_DATA_DIR}
 write-kubeconfig-mode: "0644"
-bind-address: ${FQDN}
-advertise-address: ${CLUSTER_IP}
-flannel-iface: ${VPN_IFACE}
 tls-san:
   - ${CLUSTER_IP}
   - ${PUBLIC_IP:-${CLUSTER_IP}}
   - 127.0.0.1
-node-ip: ${CLUSTER_IP}
-node-external-ip: ${PUBLIC_IP:-${CLUSTER_IP}}
 EOF
 else
     sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
 cluster-name: ${CLUSTER_NAME}
 data-dir: ${K3S_DATA_DIR}
 write-kubeconfig-mode: "0644"
-bind-address: ${CLUSTER_IP}
-advertise-address: ${CLUSTER_IP}
-flannel-iface: ${VPN_IFACE}
 tls-san:
   - ${CLUSTER_IP}
   - ${PUBLIC_IP:-${CLUSTER_IP}}
   - 127.0.0.1
-node-ip: ${CLUSTER_IP}
-node-external-ip: ${PUBLIC_IP:-${CLUSTER_IP}}
 EOF
 fi
-
-if [[ -n "$FQDN" ]]; then
-   echo "[INFO] setting current hostname as FQDN: ${FQDN}"
-   hostname "$FQDN"
-fi
-
 
 # ===============================================
 # 🚀 Install K3s
@@ -139,23 +123,16 @@ echo "[INFO] Installing K3s..."
 
 # Construct args securely
 INSTALL_OPTS="server"
-INSTALL_OPTS+=" --flannel-iface=${VPN_IFACE}"
-INSTALL_OPTS+=" --node-ip=${CLUSTER_IP}"
-INSTALL_OPTS+=" --advertise-address=${CLUSTER_IP}"
 INSTALL_OPTS+=" --tls-san ${FQDN}"
 INSTALL_OPTS+=" --tls-san ${CLUSTER_IP}"
 INSTALL_OPTS+=" --tls-san ${PUBLIC_IP:-${CLUSTER_IP}}"
+INSTALL_OPTS+=" --tls-san 127.0.0.1"
 INSTALL_OPTS+=" --write-kubeconfig-mode 0644"
 
 curl -sfL https://get.k3s.io | \
   INSTALL_K3S_EXEC="${INSTALL_OPTS}" \
   K3S_DATA_DIR="$K3S_DATA_DIR" \
   sh -
-
-if [[ -n "$FQDN" ]]; then
-   echo "[INFO] restoring current hostname: ${currentHostname}"
-   hostname "$currentHostname"
-fi
 
 # ===============================================
 # 🔁 Restart + Wait Ready
@@ -199,3 +176,8 @@ echo "FQDN    : ${FQDN}"
 echo "VPN IF  : ${VPN_IFACE}"
 echo "Public  : ${PUBLIC_IP:-N/A}"
 echo "--------------------------------------------"
+echo "To check the cluster, run:"
+echo "kubectl get nodes -o wide"
+echo "--------------------------------------------"
+echo "To check the cluster, run:"
+echo "openssl s_client -connect ${FQDN}:6443 2>/dev/null | openssl x509 -noout -text | grep DNS:"
