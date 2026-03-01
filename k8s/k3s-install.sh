@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ===============================================
-# ⚙️ Default Config
+# ⚙️ Default Configuration
 # ===============================================
 CLUSTER_NAME="k8s-local"
 DATA_PATH="/mnt/data"
@@ -18,7 +18,7 @@ CLEANUP=false
 CONTINUE=false
 
 # ===============================================
-# 🧠 Parse Args
+# 🧠 Parse Arguments
 # ===============================================
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -52,7 +52,7 @@ if [[ "$CLEANUP" == true ]]; then
 fi
 
 # ===============================================
-# 🌐 Detect Network
+# 🌐 Network Detection
 # ===============================================
 echo "[INFO] Detecting network..."
 
@@ -88,17 +88,31 @@ echo "[INFO] FQDN       : $FQDN"
 sudo mkdir -p "$(dirname "$K3S_CONFIG_FILE")"
 
 sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
+# ===============================================
+# ⚙️ K3s Configuration (adjusted for NetBird)
+# ===============================================
+
 cluster-name: ${CLUSTER_NAME}
 data-dir: ${K3S_DATA_DIR}
+node-name: ${CLUSTER_NAME}
 write-kubeconfig-mode: "0644"
-bind-address: ${CLUSTER_IP}
+
+# 🌐 Network and primary IP
+bind-address: 0.0.0.0
 advertise-address: ${CLUSTER_IP}
+node-ip: ${CLUSTER_IP}
+node-external-ip: ${CLUSTER_IP}
 flannel-iface: ${VPN_IFACE}
+
+# 🧠 TLS adjustments
 tls-san:
   - ${FQDN}
   - ${CLUSTER_IP}
-  - ${PUBLIC_IP:-${CLUSTER_IP}}
-  - 127.0.0.1
+
+# ⚙️ Kube-proxy adjustments (ensure correct NAT)
+kube-proxy-arg:
+  - proxy-mode=iptables
+  - hostname-override=${CLUSTER_IP}
 EOF
 
 
@@ -109,14 +123,18 @@ echo "[INFO] Installing K3s..."
 
 # Construct args securely
 INSTALL_OPTS="server"
+INSTALL_OPTS+=" --node-name ${CLUSTER_NAME}"
 INSTALL_OPTS+=" --tls-san ${FQDN}"
 INSTALL_OPTS+=" --tls-san ${CLUSTER_IP}"
-INSTALL_OPTS+=" --tls-san ${PUBLIC_IP:-${CLUSTER_IP}}"
 INSTALL_OPTS+=" --tls-san 127.0.0.1"
 INSTALL_OPTS+=" --write-kubeconfig-mode 0644"
-INSTALL_OPTS+=" --bind-address ${CLUSTER_IP}"
+INSTALL_OPTS+=" --bind-address 0.0.0.0"
 INSTALL_OPTS+=" --advertise-address ${CLUSTER_IP}"
+INSTALL_OPTS+=" --node-ip ${CLUSTER_IP}"
+INSTALL_OPTS+=" --node-external-ip ${CLUSTER_IP}"
 INSTALL_OPTS+=" --flannel-iface ${VPN_IFACE}"
+INSTALL_OPTS+=" --kube-proxy-arg proxy-mode=iptables"
+INSTALL_OPTS+=" --kube-proxy-arg hostname-override=${CLUSTER_IP}"
 
 curl -sfL https://get.k3s.io | \
   INSTALL_K3S_EXEC="${INSTALL_OPTS}" \
