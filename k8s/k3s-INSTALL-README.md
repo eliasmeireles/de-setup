@@ -18,7 +18,7 @@ chmod +x k3s-install.sh
 ### **Option 2 — Run directly with `curl | bash`**
 
 ```bash
-curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-install.sh | bash -s -- --cn my-cluster
+
 ```
 
 ---

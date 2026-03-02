@@ -135,18 +135,7 @@ echo "[INFO] Installing K3s..."
 
 curl -sfL https://get.k3s.io | \
   K3S_DATA_DIR="$K3S_DATA_DIR" \
-  sh -s - server \
-  --node-name "${CLUSTER_NAME}" \
-  --tls-san "${FQDN}" \
-  --tls-san "${CLUSTER_IP}" \
-  --write-kubeconfig-mode 0644 \
-  --bind-address 0.0.0.0 \
-  --advertise-address "${CLUSTER_IP}" \
-  --node-ip "${CLUSTER_IP}" \
-  --node-external-ip "${CLUSTER_IP}" \
-  --flannel-iface "${VPN_IFACE}" \
-  --kube-proxy-arg proxy-mode=iptables \
-  --kube-proxy-arg hostname-override="${CLUSTER_IP}"
+  sh -s - server
 
 # ===============================================
 # 🔁 Restart + Wait Ready
