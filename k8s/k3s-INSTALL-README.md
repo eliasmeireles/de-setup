@@ -28,21 +28,22 @@ curl -fsSL https://eliasmeireles.com.br/tools/k8s/k3s-install.sh | bash -s -- --
 The script supports multiple options for customization, though it tries to auto-detect most settings:
 
 ```bash
-./k3s-install.sh [--cn <name>] [--cip <ip>] [--vpn-if <iface>] [--pubip <ip>] [--cleanup] [--continue]
+./k3s-install.sh [--cn <name>] [--cip <ip>] [--vpn-if <iface>] [--pubip <ip>] [--path <path>] [--cleanup] [--continue] [--install-traefik]
 ```
 
 ### Available Options
 
-| Option       | Description                                                                 | Default |
-| ------------ | --------------------------------------------------------------------------- | ------- |
-| `--cn`       | Sets the cluster name (used in kubeconfig context).                         | `k8s-local` |
-| `--cip`      | Sets the Cluster IP (Internal/VPN IP).                                      | Auto-detected (VPN > Hostname IP) |
-| `--vpn-if`   | Sets the VPN interface name (e.g., `wt0`, `wg0`).                           | Auto-detected |
-| `--pubip`    | Sets the Public IP (for external access).                                   | Auto-detected (Amazon CheckIP > Route) |
-| `--path`     | Sets the data directory path.                                               | `/mnt/data` |
-| `--cleanup`  | Uninstalls K3s and cleans up data directories.                              | *Optional* |
-| `--continue` | Used with `--cleanup` to reinstall immediately after cleanup.               | *Optional* |
-| `--help`     | Displays help and usage information.                                        | — |
+| Option              | Description                                                   | Default                                |
+| ------------------- | ------------------------------------------------------------- | -------------------------------------- |
+| `--cn`              | Sets the cluster name (used in kubeconfig context).           | `k8s-local`                            |
+| `--cip`             | Sets the Cluster IP (Internal/VPN IP).                        | Auto-detected (VPN > Hostname IP)      |
+| `--vpn-if`          | Sets the VPN interface name (e.g., `wt0`, `wg0`).             | Auto-detected                          |
+| `--pubip`           | Sets the Public IP (for external access).                     | Auto-detected (Amazon CheckIP > Route) |
+| `--path`            | Sets the data directory path.                                 | `/mnt/data`                            |
+| `--install-traefik` | Installs Traefik ingress controller (disabled by default).    | *Optional*                             |
+| `--cleanup`         | Uninstalls K3s and cleans up data directories.                | *Optional*                             |
+| `--continue`        | Used with `--cleanup` to reinstall immediately after cleanup. | *Optional*                             |
+| `--help`            | Displays help and usage information.                          | —                                      |
 
 ---
 
@@ -72,6 +73,18 @@ The script supports multiple options for customization, though it tries to auto-
 ./k3s-install.sh --cleanup --continue
 ```
 
+### 5. Install with Traefik Ingress Controller
+
+```bash
+./k3s-install.sh --install-traefik
+```
+
+### 6. Custom Setup with Traefik
+
+```bash
+./k3s-install.sh --cn prod-cluster --path /data --install-traefik
+```
+
 ---
 
 ## 🧩 Features
@@ -85,12 +98,16 @@ The script supports multiple options for customization, though it tries to auto-
     *   Binds API Server and Advertiser to the Cluster/VPN IP.
     *   Adds FQDN, Public IP, and Localhost to TLS SANs for secure connectivity.
 
-3.  **Kubeconfig Setup**:
+3.  **Minimal Installation**:
+    *   Traefik ingress controller is **disabled by default** for a lightweight setup.
+    *   Use `--install-traefik` flag if you need Traefik or install your preferred ingress controller later.
+
+4.  **Kubeconfig Setup**:
     *   Automatically copies and permissions `~/.kube/config`.
     *   Updates the server URL to use the FQDN for remote access.
     *   Sets the context name to match your Cluster Name.
 
-4.  **Verification**:
+5.  **Verification**:
     *   Waits for the API server to be ready.
     *   Verifies node status.
     *   Provides commands to check certificate validity.
