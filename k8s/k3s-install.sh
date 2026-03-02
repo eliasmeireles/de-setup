@@ -16,6 +16,7 @@ PUBLIC_IP=""
 FQDN=""
 CLEANUP=false
 CONTINUE=false
+INSTALL_TRAEFIK=false
 
 # ===============================================
 # 🧠 Parse Arguments
@@ -29,8 +30,9 @@ while [[ $# -gt 0 ]]; do
     --path) DATA_PATH="$2"; K3S_DATA_DIR="${DATA_PATH}/k3s"; shift 2 ;;
     --cleanup) CLEANUP=true; shift ;;
     --continue) CONTINUE=true; shift ;;
+    --install-traefik) INSTALL_TRAEFIK=true; shift ;;
     --help)
-      echo "Usage: $0 [--cn name] [--cip ip] [--vpn-if iface] [--pubip ip] [--cleanup]"
+      echo "Usage: $0 [--cn name] [--cip ip] [--vpn-if iface] [--pubip ip] [--path path] [--cleanup] [--continue] [--install-traefik]"
       exit 0
       ;;
     *) shift ;;
@@ -87,6 +89,12 @@ echo "[INFO] FQDN       : $FQDN"
 # ===============================================
 sudo mkdir -p "$(dirname "$K3S_CONFIG_FILE")"
 
+DISABLE_COMPONENTS=""
+if [[ "$INSTALL_TRAEFIK" == false ]]; then
+  DISABLE_COMPONENTS="disable:
+  - traefik"
+fi
+
 sudo tee "$K3S_CONFIG_FILE" >/dev/null <<EOF
 # ===============================================
 # ⚙️ K3s Configuration (adjusted for NetBird)
@@ -113,6 +121,9 @@ tls-san:
 kube-proxy-arg:
   - proxy-mode=iptables
   - hostname-override=${CLUSTER_IP}
+
+# 🚫 Disabled components
+${DISABLE_COMPONENTS}
 EOF
 
 
@@ -120,26 +131,22 @@ EOF
 # 🚀 Install K3s
 # ===============================================
 echo "[INFO] Installing K3s..."
-
-# Construct args securely
-INSTALL_OPTS="server"
-INSTALL_OPTS+=" --node-name ${CLUSTER_NAME}"
-INSTALL_OPTS+=" --tls-san ${FQDN}"
-INSTALL_OPTS+=" --tls-san ${CLUSTER_IP}"
-INSTALL_OPTS+=" --tls-san 127.0.0.1"
-INSTALL_OPTS+=" --write-kubeconfig-mode 0644"
-INSTALL_OPTS+=" --bind-address 0.0.0.0"
-INSTALL_OPTS+=" --advertise-address ${CLUSTER_IP}"
-INSTALL_OPTS+=" --node-ip ${CLUSTER_IP}"
-INSTALL_OPTS+=" --node-external-ip ${CLUSTER_IP}"
-INSTALL_OPTS+=" --flannel-iface ${VPN_IFACE}"
-INSTALL_OPTS+=" --kube-proxy-arg proxy-mode=iptables"
-INSTALL_OPTS+=" --kube-proxy-arg hostname-override=${CLUSTER_IP}"
+[[ "$INSTALL_TRAEFIK" == false ]] && echo "[INFO] Traefik will be disabled" || echo "[INFO] Traefik will be installed"
 
 curl -sfL https://get.k3s.io | \
-  INSTALL_K3S_EXEC="${INSTALL_OPTS}" \
   K3S_DATA_DIR="$K3S_DATA_DIR" \
-  sh -
+  sh -s - server \
+  --node-name "${CLUSTER_NAME}" \
+  --tls-san "${FQDN}" \
+  --tls-san "${CLUSTER_IP}" \
+  --write-kubeconfig-mode 0644 \
+  --bind-address 0.0.0.0 \
+  --advertise-address "${CLUSTER_IP}" \
+  --node-ip "${CLUSTER_IP}" \
+  --node-external-ip "${CLUSTER_IP}" \
+  --flannel-iface "${VPN_IFACE}" \
+  --kube-proxy-arg proxy-mode=iptables \
+  --kube-proxy-arg hostname-override="${CLUSTER_IP}"
 
 # ===============================================
 # 🔁 Restart + Wait Ready
