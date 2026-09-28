@@ -75,7 +75,7 @@ echo
 
 # Show disk usage before cleanup
 echo "📊 Disk usage before cleanup:"
-df -h | grep mnt
+df -h | grep -E " /$| /mnt" || true
 echo
 
 # Check if k3s is running
@@ -130,7 +130,7 @@ cleanup_images
 
 # Show disk usage after cleanup
 echo "📊 Disk usage after cleanup:"
-df -h | grep mnt
+df -h | grep -E " /$| /mnt" || true
 echo
 
 echo "✅ K3s cleanup completed successfully!"

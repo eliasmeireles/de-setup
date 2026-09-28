@@ -119,7 +119,7 @@ sudo k3s crictl rmi --prune
 ### Check Disk Usage
 ```bash
 # Before cleanup
-df -h | grep mnt
+df -h | grep -E " /$| /mnt" || true
 
 # View cleanup history
 sudo grep "Disk usage" /var/log/k3s-cleanup.log
